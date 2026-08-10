@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17324d">
+<link rel="manifest" href="manifest.json">
+<title>Miles & More Ledger</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17202a;background:#f4f6f8;--navy:#17324d;--gold:#d8a928;--card:#fff;--muted:#697586}
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:900px;margin:auto;padding:20px 16px 60px}
+header{background:var(--navy);color:#fff;margin:-20px -16px 20px;padding:24px 16px 20px}.brand{font-size:13px;opacity:.8;text-transform:uppercase;letter-spacing:.08em}.title{font-size:28px;font-weight:750;margin-top:5px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 1px 4px #00000012}.label{font-size:13px;color:var(--muted)}.value{font-size:24px;font-weight:750;margin-top:5px}.business{border-top:4px solid #4b78a8}.personal{border-top:4px solid #6c9b75}.total{border-top:4px solid var(--gold)}
+.panel{background:var(--card);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px #00000012}.panel h2{font-size:18px;margin:0 0 14px}
+form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}label{font-size:13px;color:#4d5966;font-weight:600}input,select{width:100%;margin-top:6px;padding:11px 12px;border:1px solid #d4dae1;border-radius:9px;background:#fff;font:inherit}button{border:0;border-radius:9px;padding:11px 14px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--navy);color:#fff}.secondary{background:#e9eef3;color:#17324d}.danger{background:#fbe8e8;color:#a32929}.full{grid-column:1/-1}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid #e7eaee}th{color:var(--muted);font-size:12px;text-transform:uppercase}.pill{display:inline-block;padding:4px 8px;border-radius:99px;font-size:12px;font-weight:700}.pill.b{background:#e8f0f8;color:#315d85}.pill.p{background:#e9f3eb;color:#477052}
+.empty{text-align:center;color:var(--muted);padding:25px}.reconcile{display:flex;gap:10px;align-items:end}.reconcile>div{flex:1}.match{margin-top:12px;font-weight:700}.small{font-size:12px;color:var(--muted);line-height:1.5}
+@media(max-width:650px){.cards{grid-template-columns:1fr 1fr}.cards .total{grid-column:1/-1}.value{font-size:21px}form{grid-template-columns:1fr}table{display:block;overflow-x:auto;white-space:nowrap}.reconcile{display:block}.reconcile button{margin-top:10px}.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="brand">Personal travel ledger</div><div class="title">Miles & More Ledger</div></header>
+
+<section class="cards">
+  <div class="card total"><div class="label">Total miles</div><div class="value" id="total">0</div></div>
+  <div class="card business"><div class="label">Company</div><div class="value" id="business">0</div></div>
+  <div class="card personal"><div class="label">Personal</div><div class="value" id="personal">0</div></div>
+</section>
+
+<section class="panel">
+<h2>Add a flight</h2>
+<form id="flightForm">
+<label>Date<input id="date" type="date" required></label>
+<label>Airline<input id="airline" placeholder="e.g. Lufthansa"></label>
+<label>Flight number<input id="flight" placeholder="e.g. LH400"></label>
+<label>Route<input id="route" placeholder="e.g. FRA → JFK" required></label>
+<label>Miles earned<input id="miles" type="number" min="0" step="1" placeholder="3500" required></label>
+<label>Ownership<select id="owner"><option value="business">Company</option><option value="personal">Personal</option></select></label>
+<div class="full actions"><button class="primary" type="submit">Add flight</button></div>
+</form>
+</section>
+
+<section class="panel">
+<h2>Reconcile with Miles & More</h2>
+<div class="reconcile">
+<div><label>Current account balance<input id="balance" type="number" min="0" step="1" placeholder="e.g. 142350"></label></div>
+<button class="secondary" id="reconcileBtn">Check</button>
+</div>
+<div class="match" id="reconcileResult"></div>
+<div class="small">This compares the balance you enter with the ledger's recorded miles. It does not connect to Miles & More.</div>
+</section>
+
+<section class="panel">
+<h2>Flight history</h2>
+<div class="actions" style="margin-bottom:12px"><button class="secondary" id="exportBtn">Export CSV</button><button class="secondary" id="backupBtn">Backup data</button><label class="secondary" style="display:inline-block;cursor:pointer">Restore backup<input id="restore" type="file" accept=".json" style="display:none"></label><button class="danger" id="clearBtn">Clear all</button></div>
+<div id="tableWrap"></div>
+</section>
+</div>
+
+<script>
+const KEY='mm-ledger-v1';
+let flights=JSON.parse(localStorage.getItem(KEY)||'[]');
+const $=id=>document.getElementById(id);
+const fmt=n=>Number(n||0).toLocaleString('en-US');
+
+function save(){localStorage.setItem(KEY,JSON.stringify(flights));render();}
+function render(){
+  const total=flights.reduce((s,f)=>s+Number(f.miles),0);
+  const biz=flights.filter(f=>f.owner==='business').reduce((s,f)=>s+Number(f.miles),0);
+  const per=total-biz;
+  $('total').textContent=fmt(total); $('business').textContent=fmt(biz); $('personal').textContent=fmt(per);
+  if(!flights.length){$('tableWrap').innerHTML='<div class="empty">No flights recorded yet.</div>';return}
+  flights.sort((a,b)=>b.date.localeCompare(a.date));
+  $('tableWrap').innerHTML=`<table><thead><tr><th>Date</th><th>Flight</th><th>Route</th><th>Miles</th><th>Ownership</th><th></th></tr></thead><tbody>${
+    flights.map((f,i)=>`<tr><td>${f.date}</td><td>${esc(f.airline||'')} ${esc(f.flight||'')}</td><td>${esc(f.route)}</td><td>${fmt(f.miles)}</td><td><span class="pill ${f.owner==='business'?'b':'p'}">${f.owner==='business'?'Company':'Personal'}</span></td><td><button class="danger" onclick="removeFlight(${i})">Delete</button></td></tr>`).join('')
+  }</tbody></table>`;
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function removeFlight(i){if(confirm('Delete this flight?')){flights.splice(i,1);save()}}
+$('flightForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ flights.push({date:$('date').value,airline:$('airline').value.trim(),flight:$('flight').value.trim(),route:$('route').value.trim(),miles:Number($('miles').value),owner:$('owner').value});
+ e.target.reset(); $('owner').value='business'; save();
+});
+$('reconcileBtn').onclick=()=>{
+ const entered=Number($('balance').value); const total=flights.reduce((s,f)=>s+Number(f.miles),0);
+ const diff=entered-total; $('reconcileResult').textContent=entered===total?'✓ Matches your ledger.':`Difference: ${diff>0?'+':''}${fmt(diff)} miles`;
+};
+$('exportBtn').onclick=()=>{
+ const rows=[['Date','Airline','Flight','Route','Miles','Ownership'],...flights.map(f=>[f.date,f.airline,f.flight,f.route,f.miles,f.owner==='business'?'Company':'Personal'])];
+ const csv=rows.map(r=>r.map(x=>`"${String(x??'').replaceAll('"','""')}"`).join(',')).join('\\n');
+ download('miles-more-ledger.csv',csv,'text/csv');
+};
+$('backupBtn').onclick=()=>download('miles-more-ledger-backup.json',JSON.stringify(flights,null,2),'application/json');
+$('restore').onchange=e=>{
+ const file=e.target.files[0]; if(!file)return;
+ const r=new FileReader(); r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x))throw 0;flights=x;save();alert('Backup restored.')}catch{alert('Invalid backup file.')}};r.readAsText(file);
+};
+$('clearBtn').onclick=()=>{if(confirm('Delete ALL recorded flights?')){flights=[];save()}};
+function download(name,data,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+render();
+</script>
+</body>
+</html>
