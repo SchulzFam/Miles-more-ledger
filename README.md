@@ -1,19 +1,7 @@
-# Miles & More Ledger
+# Miles & More Ledger v0.2
 
-A local-first mobile web app for tracking Miles & More miles by Company vs Personal.
+Tracks flight earnings, company/personal credit-card earnings, other credits, redemptions, and adjustments. Company/personal ownership is recorded for every transaction.
 
-## Included
-- Dashboard totals
-- Flight entry
-- Company/personal classification
-- Reconciliation against a manually entered Miles & More balance
-- CSV export
-- JSON backup/restore
-- Browser local storage
-- PWA manifest
+Includes CSV export, JSON backup/restore, reconciliation, local browser storage, and automatic migration of v0.1 flight records.
 
-## Run locally
-From this folder, start a simple web server, for example:
-`python3 -m http.server 8000`
-
-Then open `http://localhost:8000`.
+Replace `index.html` and `manifest.json` in the existing GitHub repository. GitHub Pages will republish automatically.
