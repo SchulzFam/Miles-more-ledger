@@ -1,10 +1,5 @@
-# Miles & More Ledger v0.3
+# Loyalty Ledger v0.4
 
-v0.3 adds:
-- Company and Personal balance history
-- Negative ownership balances with a review warning
-- Edit existing transactions
-- Automatic migration from v0.2/v0.1
-- Existing CSV export, JSON backup/restore, and reconciliation retained
+Multi-program loyalty ledger. Replace the existing `index.html`, `manifest.json`, and optionally `README.md` in the GitHub Pages repository.
 
-Replace `index.html`, `manifest.json`, and optionally `README.md` in the existing GitHub repository.
+Features: multiple loyalty programs, company/personal ownership per program, balance history, edit/delete, CSV export, JSON backup/restore, reconciliation, and migration of v3/v2 data into Miles & More.
