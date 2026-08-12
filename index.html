@@ -1,22 +1,393 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#17324d"><link rel="manifest" href="manifest.json"><title>Loyalty Ledger</title><style>
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f6f8;color:#17202a;margin:0}.wrap{max-width:1000px;margin:auto;padding:20px 16px 60px}header{background:#17324d;color:white;margin:-20px -16px 20px;padding:24px 16px}.brand{font-size:12px;opacity:.8;text-transform:uppercase}.title{font-size:28px;font-weight:750}.toolbar{display:flex;gap:10px;margin-bottom:16px;align-items:end}.toolbar>div{flex:1}.panel,.card{background:white;border-radius:14px;padding:18px;box-shadow:0 1px 4px #0001;margin-bottom:16px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.card{margin:0;cursor:pointer}.business{border-top:4px solid #4b78a8}.personal{border-top:4px solid #6c9b75}.total{border-top:4px solid #d8a928}.label,.small{font-size:12px;color:#697586}.value{font-size:24px;font-weight:750;margin-top:5px}.negative{color:#a32929}form{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{font-size:13px;font-weight:600;color:#4d5966}input,select{width:100%;box-sizing:border-box;margin-top:6px;padding:11px;border:1px solid #d4dae1;border-radius:9px;background:white;font:inherit}.full{grid-column:1/-1}.actions{display:flex;gap:8px;flex-wrap:wrap}button{border:0;border-radius:9px;padding:10px 13px;font-weight:700;cursor:pointer}.primary{background:#17324d;color:white}.secondary{background:#e9eef3;color:#17324d}.danger{background:#fbe8e8;color:#a32929}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:10px 7px;border-bottom:1px solid #e7eaee;vertical-align:top}th{font-size:11px;color:#697586;text-transform:uppercase}.pill{display:inline-block;padding:4px 8px;border-radius:99px;font-size:12px;font-weight:700}.b{background:#e8f0f8;color:#315d85}.p{background:#e9f3eb;color:#477052}.earn{background:#eef4fb;color:#315d85}.spend{background:#fbefef;color:#9a3b3b}.empty{text-align:center;color:#697586;padding:25px}.reconcile{display:flex;gap:10px;align-items:end}.reconcile>div{flex:1}.match{margin-top:10px;font-weight:700}.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:16px}.modal.open{display:flex}.modalbox{background:white;border-radius:16px;max-width:850px;width:100%;max-height:90vh;overflow:auto;padding:20px}.close{float:right}.alert{background:#fff5dc;padding:10px;border-radius:10px;color:#815500;margin-top:10px}@media(max-width:700px){.toolbar{display:block}.toolbar button{margin-top:8px}.cards{grid-template-columns:1fr 1fr}.total{grid-column:1/-1}form{grid-template-columns:1fr}.full{grid-column:auto}.reconcile{display:block}.reconcile button{margin-top:8px}table{display:block;overflow-x:auto;white-space:nowrap}}
-</style></head><body><div class="wrap"><header><div class="brand">Personal travel & loyalty ledger</div><div class="title">Loyalty Ledger</div></header><div class="toolbar"><div><label>Active loyalty program<select id="program"></select></label></div><button class="secondary" id="manage">Manage programs</button></div><div class="cards"><div class="card total"><div class="label" id="totalLabel">Net balance</div><div class="value" id="total">0</div></div><div class="card business" onclick="history('business')"><div class="label">Company balance · tap for history</div><div class="value" id="biz">0</div></div><div class="card personal" onclick="history('personal')"><div class="label">Personal balance · tap for history</div><div class="value" id="per">0</div></div></div>
-<section class="panel"><h2>Add transaction</h2><form id="form"><input type="hidden" id="id"><label>Type<select id="type"><option value="flight">✈️ Flight earning</option><option value="card_company">💳 Company credit card</option><option value="card_personal">💳 Personal credit card</option><option value="other_earning">🎁 Other earning</option><option value="redemption">🎟️ Award / redemption</option><option value="adjustment">↔️ Adjustment</option></select></label><label>Date<input id="date" type="date" required></label><label>Miles / points<input id="miles" type="number" required></label><label>Ownership<select id="owner"><option value="business">Company</option><option value="personal">Personal</option></select></label><label id="airlineL">Airline<input id="airline"></label><label id="flightL">Flight number<input id="flight"></label><label id="routeL">Route<input id="route" placeholder="FRA → JFK"></label><label id="cardL" style="display:none">Card / account<input id="card"></label><label class="full">Description<input id="desc"></label><div class="full actions"><button class="primary">Add transaction</button><button class="secondary" type="button" id="cancel" style="display:none">Cancel edit</button></div></form></section>
-<section class="panel"><h2>Reconcile with loyalty account</h2><div class="reconcile"><div><label>Current account balance<input id="recon" type="number"></label></div><button class="secondary" id="check">Check</button></div><div class="match" id="result"></div></section>
-<section class="panel"><h2>Transaction history</h2><div class="actions"><button class="secondary" id="csv">Export CSV</button><button class="secondary" id="backup">Backup data</button><label class="secondary" style="padding:10px 13px;border-radius:9px;cursor:pointer">Restore backup<input id="restore" type="file" accept=".json" style="display:none"></label><button class="danger" id="clear">Clear all transactions</button></div><div id="table"></div></section></div>
-<div class="modal" id="hm"><div class="modalbox"><button class="secondary close" onclick="closeM('hm')">Close</button><h2 id="ht"></h2><div class="value" id="hb"></div><div id="hw"></div><div id="hbody"></div></div></div>
-<div class="modal" id="pm"><div class="modalbox"><button class="secondary close" onclick="closeM('pm')">Close</button><h2>Loyalty programs</h2><div id="plist"></div><div class="panel"><h3>Add program</h3><form id="pf"><label>Program name<input id="pn" placeholder="e.g. Flying Blue" required></label><label>Unit<input id="pu" value="miles" placeholder="miles or points"></label><div class="full"><button class="primary">Add program</button></div></form></div></div></div>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17324d">
+<link rel="manifest" href="manifest.json">
+<title>Loyalty Ledger</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17202a;background:#f4f6f8;--navy:#17324d;--muted:#697586}
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1050px;margin:auto;padding:20px 16px 60px}
+header{background:var(--navy);color:#fff;margin:-20px -16px 20px;padding:24px 16px}.brand{font-size:13px;opacity:.8;text-transform:uppercase;letter-spacing:.08em}.title{font-size:28px;font-weight:750;margin-top:5px}
+.toolbar{display:flex;gap:10px;align-items:end;margin-bottom:16px}.toolbar>div{flex:1}
+label{font-size:13px;color:#4d5966;font-weight:600}select,input{width:100%;margin-top:6px;padding:11px 12px;border:1px solid #d4dae1;border-radius:9px;background:#fff;font:inherit}
+button{border:0;border-radius:9px;padding:10px 13px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--navy);color:#fff}.secondary{background:#e9eef3;color:#17324d}.danger{background:#fbe8e8;color:#a32929}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px #0001;cursor:pointer}.label{font-size:13px;color:var(--muted)}.value{font-size:24px;font-weight:750;margin-top:5px}.business{border-top:4px solid #4b78a8}.personal{border-top:4px solid #6c9b75}.total{border-top:4px solid #d8a928}.negative{color:#a32929}
+.panel{background:#fff;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px #0001}.panel h2{font-size:18px;margin:0 0 14px}
+form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.full{grid-column:1/-1}.actions{display:flex;gap:8px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:10px 7px;border-bottom:1px solid #e7eaee;vertical-align:top}th{color:var(--muted);font-size:12px;text-transform:uppercase}
+.pill{display:inline-block;padding:4px 8px;border-radius:99px;font-size:12px;font-weight:700}.pill.b{background:#e8f0f8;color:#315d85}.pill.p{background:#e9f3eb;color:#477052}.pill.earn{background:#eef4fb;color:#315d85}.pill.spend{background:#fbefef;color:#9a3b3b}
+.empty{text-align:center;color:var(--muted);padding:25px}.small{font-size:12px;color:var(--muted);line-height:1.5}.sectionline{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.reconcile{display:flex;gap:10px;align-items:end}.reconcile>div{flex:1}.match{margin-top:12px;font-weight:700}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}.modal.open{display:flex}.modalbox{background:#fff;border-radius:16px;max-width:850px;width:100%;max-height:90vh;overflow:auto;padding:20px}.close{float:right}.historybar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.alert{background:#fff5dc;border-radius:10px;padding:10px 12px;margin-top:10px;color:#815500;font-size:13px}
+.notice{background:#eaf4ec;border-radius:10px;padding:10px 12px;color:#3e6945;font-size:13px;margin-bottom:14px}
+@media(max-width:700px){.toolbar{display:block}.toolbar button{margin-top:8px}.cards{grid-template-columns:1fr 1fr}.cards .total{grid-column:1/-1}.value{font-size:21px}form{grid-template-columns:1fr}table{display:block;overflow-x:auto;white-space:nowrap}.reconcile{display:block}.reconcile button{margin-top:10px}.full{grid-column:auto}.sectionline,.historybar{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="brand">Personal travel & loyalty ledger</div><div class="title">Loyalty Ledger</div></header>
+
+<div id="migrationNotice"></div>
+
+<section class="toolbar">
+<div><label>Active loyalty program<select id="programSelect"></select></label></div>
+<button class="secondary" id="managePrograms" type="button">Manage programs</button>
+</section>
+
+<section class="cards">
+<div class="card total"><div class="label" id="totalLabel">Net balance</div><div class="value" id="total">0</div></div>
+<div class="card business" onclick="showHistory('business')"><div class="label">Company balance · tap for history</div><div class="value" id="business">0</div></div>
+<div class="card personal" onclick="showHistory('personal')"><div class="label">Personal balance · tap for history</div><div class="value" id="personal">0</div></div>
+</section>
+
+<section class="panel">
+<div class="sectionline"><h2>Add transaction</h2><span class="small">Positive = earned · Negative = spent</span></div>
+<form id="txForm">
+<input type="hidden" id="editId">
+<label>Type<select id="type">
+<option value="flight">✈️ Flight earning</option>
+<option value="card_company">💳 Company credit card</option>
+<option value="card_personal">💳 Personal credit card</option>
+<option value="other_earning">🎁 Other earning</option>
+<option value="redemption">🎟️ Award / redemption</option>
+<option value="adjustment">↔️ Adjustment</option>
+</select></label>
+<label>Date<input id="date" type="date" required></label>
+<label>Miles / points<input id="miles" type="number" step="1" required placeholder="e.g. 3500"></label>
+<label>Ownership<select id="owner"><option value="business">Company</option><option value="personal">Personal</option></select></label>
+<div id="flightFields" style="display:contents">
+<label>Airline<input id="airline" placeholder="e.g. Lufthansa"></label>
+<label>Flight number<input id="flight" placeholder="e.g. LH400"></label>
+<label>Route<input id="route" placeholder="e.g. FRA → JFK"></label>
+</div>
+<div id="cardFields" style="display:none">
+<label>Card / account<input id="card" placeholder="e.g. Company card"></label>
+</div>
+<label class="full">Description<input id="description" placeholder="Optional note"></label>
+<div class="full actions"><button class="primary" id="submitBtn" type="submit">Add transaction</button><button class="secondary" id="cancelEdit" type="button" style="display:none">Cancel edit</button></div>
+</form>
+</section>
+
+<section class="panel">
+<h2>Reconcile with loyalty account</h2>
+<div class="reconcile"><div><label>Current account balance<input id="balance" type="number" min="0" step="1" placeholder="e.g. 142350"></label></div><button class="secondary" id="reconcileBtn" type="button">Check</button></div>
+<div class="match" id="reconcileResult"></div>
+<div class="small">Compares the entered balance with the selected program's ledger. It does not connect to any loyalty program.</div>
+</section>
+
+<section class="panel">
+<div class="sectionline"><h2>Transaction history</h2><span class="small" id="count"></span></div>
+<div class="actions" style="margin-bottom:12px">
+<button class="secondary" id="exportBtn" type="button">Export CSV</button>
+<button class="secondary" id="backupBtn" type="button">Backup data</button>
+<label class="secondary" style="display:inline-block;cursor:pointer">Restore backup<input id="restore" type="file" accept=".json" style="display:none"></label>
+<button class="danger" id="clearBtn" type="button">Clear all transactions</button>
+</div>
+<div id="tableWrap"></div>
+</section>
+</div>
+
+<div class="modal" id="historyModal"><div class="modalbox">
+<button class="secondary close" onclick="closeHistory()" type="button">Close</button>
+<div class="historybar"><div><h2 id="historyTitle" style="margin:0"></h2><div class="small">Running balance for this ownership category</div></div><div class="value" id="historyBalance"></div></div>
+<div id="historyWarning"></div><div id="historyTable"></div>
+</div></div>
+
+<div class="modal" id="programModal"><div class="modalbox">
+<button class="secondary close" onclick="closePrograms()" type="button">Close</button>
+<h2>Loyalty programs</h2><div id="programList"></div>
+<div class="panel" style="margin-top:16px;padding:14px;background:#f7f9fb">
+<h3 style="margin-top:0">Add program</h3>
+<form id="programForm">
+<label>Program name<input id="newProgram" placeholder="e.g. Flying Blue" required></label>
+<label>Unit name<input id="newUnit" value="miles" placeholder="miles, points, etc."></label>
+<div class="full"><button class="primary" type="submit">Add program</button></div>
+</form>
+</div>
+</div></div>
+
 <script>
-const K='loyalty-ledger-v4',OLD='mm-ledger-v3';const $=x=>document.getElementById(x),fmt=n=>Number(n||0).toLocaleString('en-US');const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now()+Math.random();const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let s=(()=>{try{let x=JSON.parse(localStorage.getItem(K));if(x)return x}catch{}let tx=[];try{tx=JSON.parse(localStorage.getItem(OLD)||'[]').map(x=>({...x,id:x.id||uid(),programId:'miles-more'}))}catch{}return{programs:[{id:'miles-more',name:'Miles & More',unit:'miles'}],transactions:tx,activeProgramId:'miles-more'}})();
-const P=()=>s.programs.find(x=>x.id===s.activeProgramId)||s.programs[0],TX=()=>s.transactions.filter(x=>x.programId===s.activeProgramId),BAL=o=>TX().filter(x=>x.owner===o).reduce((a,x)=>a+Number(x.miles),0);function save(){localStorage.setItem(K,JSON.stringify(s));render()}
-function typeName(t){return{flight:'Flight',card_company:'Company card',card_personal:'Personal card',other_earning:'Other earning',redemption:'Redemption',adjustment:'Adjustment'}[t]||t}function details(x){if(x.type==='flight')return esc((x.airline+' '+x.flight).trim())+'<br>'+esc(x.route);if(x.type.startsWith('card_'))return esc(x.card||'Credit card');return esc(x.desc||'')}
-function render(){let p=P(),tx=TX(),b=BAL('business'),q=BAL('personal'),tot=b+q;$('program').innerHTML=s.programs.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');$('program').value=s.activeProgramId;$('totalLabel').textContent=`Net ${p.unit} in ${p.name}`;$('total').textContent=fmt(tot);$('biz').textContent=fmt(b);$('per').textContent=fmt(q);$('biz').className='value '+(b<0?'negative':'');$('per').className='value '+(q<0?'negative':'');if(!tx.length){$('table').innerHTML='<div class="empty">No transactions for '+esc(p.name)+'.</div>';return}tx.sort((a,b)=>b.date.localeCompare(a.date));$('table').innerHTML='<table><thead><tr><th>Date</th><th>Type</th><th>Details</th><th>'+esc(p.unit)+'</th><th>Ownership</th><th>Actions</th></tr></thead><tbody>'+tx.map(x=>`<tr><td>${esc(x.date)}</td><td><span class="pill ${x.miles<0?'spend':'earn'}">${typeName(x.type)}</span></td><td>${details(x)}</td><td>${x.miles>0?'+':''}${fmt(x.miles)}</td><td><span class="pill ${x.owner==='business'?'b':'p'}">${x.owner==='business'?'Company':'Personal'}</span></td><td><button class="secondary" onclick="edit('${x.id}')">Edit</button> <button class="danger" onclick="del('${x.id}')">Delete</button></td></tr>`).join('')+'</tbody></table>'}
-$('program').onchange=e=>{s.activeProgramId=e.target.value;save();reset()};$('type').onchange=fields;function fields(){let t=$('type').value,flight=t==='flight',card=t.startsWith('card_');['airlineL','flightL','routeL'].forEach(x=>$(x).style.display=flight?'block':'none');$('cardL').style.display=card?'block':'none';if(t==='card_company')$('owner').value='business';if(t==='card_personal')$('owner').value='personal'}
-function reset(){ $('id').value='';$('date').value='';$('miles').value='';$('airline').value='';$('flight').value='';$('route').value='';$('card').value='';$('desc').value='';$('owner').value='business';$('cancel').style.display='none';$('form').querySelector('button').textContent='Add transaction';fields() }
-$('form').onsubmit=e=>{e.preventDefault();let t=$('type').value,m=Number($('miles').value);if(t==='redemption'&&m>0)m=-m;let x={id:$('id').value||uid(),programId:s.activeProgramId,type:t,date:$('date').value,miles:m,owner:$('owner').value,airline:$('airline').value,flight:$('flight').value,route:$('route').value,card:$('card').value,desc:$('desc').value};let i=s.transactions.findIndex(y=>y.id===x.id);if(i>=0)s.transactions[i]=x;else s.transactions.push(x);reset();save()};function edit(id){let x=s.transactions.find(y=>y.id===id);if(!x)return;Object.keys({}).forEach(()=>{});$('id').value=x.id;$('type').value=x.type;$('date').value=x.date;$('miles').value=x.miles;$('owner').value=x.owner;$('airline').value=x.airline||'';$('flight').value=x.flight||'';$('route').value=x.route||'';$('card').value=x.card||'';$('desc').value=x.desc||'';fields();$('cancel').style.display='inline-block';$('form').querySelector('button').textContent='Save changes';scrollTo({top:0,behavior:'smooth'})}function del(id){if(confirm('Delete this transaction?')){s.transactions=s.transactions.filter(x=>x.id!==id);save()}}$('cancel').onclick=reset;
-$('check').onclick=()=>{let n=Number($('recon').value),d=n-TX().reduce((a,x)=>a+Number(x.miles),0);$('result').textContent=d===0?'✓ Matches your ledger.':'Difference: '+(d>0?'+':'')+fmt(d)+' '+P().unit};
-function history(o){let a=TX().filter(x=>x.owner===o).sort((a,b)=>a.date.localeCompare(b.date)),b=0;$('ht').textContent=(o==='business'?'Company':'Personal')+' balance history · '+P().name;$('hb').textContent=fmt(BAL(o));let h='<table><thead><tr><th>Date</th><th>Transaction</th><th>Change</th><th>Balance</th></tr></thead><tbody>';a.forEach(x=>{b+=Number(x.miles);h+=`<tr><td>${esc(x.date)}</td><td>${typeName(x.type)}<br>${details(x)}</td><td>${x.miles>0?'+':''}${fmt(x.miles)}</td><td class="${b<0?'negative':''}">${fmt(b)}</td></tr>`});h+='</tbody></table>';$('hbody').innerHTML=a.length?h:'<div class="empty">No transactions.</div>';$('hw').innerHTML=BAL(o)<0?'<div class="alert">⚠️ Negative ownership balance. The ledger still reconciles mathematically.</div>':'';$('hm').classList.add('open')}function closeM(id){$(id).classList.remove('open')}
-$('manage').onclick=()=>{plist();$('pm').classList.add('open')};function plist(){$('plist').innerHTML=s.programs.map(p=>`<div class="panel"><strong>${esc(p.name)}</strong><div class="small">${esc(p.unit)} · ${s.transactions.filter(x=>x.programId===p.id).length} transactions</div>${p.id!=='miles-more'?`<button class="danger" onclick="dp('${p.id}')">Delete</button>`:'<div class="small">Default program</div>'}</div>`).join('')}function dp(id){if(s.transactions.some(x=>x.programId===id)){alert('This program has transactions. Delete those transactions before deleting it.');return}if(confirm('Delete this program?')){s.programs=s.programs.filter(x=>x.id!==id);s.activeProgramId=s.programs[0].id;save();plist()}}$('pf').onsubmit=e=>{e.preventDefault();let p={id:uid(),name:$('pn').value.trim(),unit:$('pu').value.trim()||'miles'};if(!p.name)return;s.programs.push(p);s.activeProgramId=p.id;$('pn').value='';$('pu').value='miles';save();plist();closeM('pm')};
-function download(n,d,t){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([d],{type:t}));a.download=n;a.click()}$('csv').onclick=()=>{let p=P(),r=[['Program','Unit','Date','Type','Airline','Flight','Route','Card','Miles','Ownership','Description'],...TX().map(x=>[p.name,p.unit,x.date,typeName(x.type),x.airline,x.flight,x.route,x.card,x.miles,x.owner,x.desc])];download('loyalty-ledger.csv',r.map(a=>a.map(x=>'"'+String(x??'').replaceAll('"','""')+'"').join(',')).join('\n'),'text/csv')};$('backup').onclick=()=>download('loyalty-ledger-backup.json',JSON.stringify(s,null,2),'application/json');$('restore').onchange=e=>{let r=new FileReader();r.onload=()=>{try{s=JSON.parse(r.result);save();alert('Backup restored.')}catch{alert('Invalid backup file.')}};r.readAsText(e.target.files[0])};$('clear').onclick=()=>{if(confirm('Delete ALL transactions across ALL programs?')){s.transactions=[];save()}};render();fields();
-</script></body></html>
+(function(){
+"use strict";
+
+var DATA_KEY="loyalty-ledger-v4";
+var LEGACY_KEYS=["mm-ledger-v3","mm-ledger-v2","mm-ledger-v1"];
+var $=function(id){return document.getElementById(id)};
+var fmt=function(n){return Number(n||0).toLocaleString("en-US")};
+var uid=function(){return (window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Date.now())+"-"+Math.random()};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+
+function defaultState(){
+ return {version:4,programs:[{id:"miles-more",name:"Miles & More",unit:"miles"}],transactions:[],activeProgramId:"miles-more"};
+}
+function normalizeTransaction(x){
+ return {
+  id:x.id||uid(),
+  programId:x.programId||"miles-more",
+  date:x.date||"",
+  type:x.type||"adjustment",
+  miles:Number(x.miles||0),
+  owner:x.owner==="business"?"business":"personal",
+  airline:x.airline||"",
+  flight:x.flight||"",
+  route:x.route||"",
+  card:x.card||"",
+  description:x.description||""
+ };
+}
+function migrateLegacy(){
+ var existing=localStorage.getItem(DATA_KEY);
+ if(existing){
+  try{
+   var parsed=JSON.parse(existing);
+   if(parsed&&Array.isArray(parsed.programs)&&Array.isArray(parsed.transactions)) return {state:parsed,notice:""};
+  }catch(e){}
+ }
+ var state=defaultState();
+ var migrated=0;
+ for(var i=0;i<LEGACY_KEYS.length;i++){
+  var raw=localStorage.getItem(LEGACY_KEYS[i]);
+  if(!raw) continue;
+  try{
+   var arr=JSON.parse(raw);
+   if(Array.isArray(arr)){
+    arr.forEach(function(x){
+     state.transactions.push(normalizeTransaction(x));
+     migrated++;
+    });
+    break;
+   }
+  }catch(e){}
+ }
+ if(migrated){
+  state._migrationSource="legacy";
+  state._migrationCount=migrated;
+  return {state:state,notice:"Migrated "+migrated+" existing transaction"+(migrated===1?"":"s")+" into Miles & More."};
+ }
+ return {state:state,notice:""};
+}
+var loaded=migrateLegacy();
+var state=loaded.state;
+var migrationNotice=loaded.notice;
+
+function save(){
+ localStorage.setItem(DATA_KEY,JSON.stringify(state));
+ render();
+}
+function activeProgram(){
+ for(var i=0;i<state.programs.length;i++) if(state.programs[i].id===state.activeProgramId) return state.programs[i];
+ return state.programs[0];
+}
+function activeTransactions(){
+ var id=activeProgram().id;
+ return state.transactions.filter(function(t){return t.programId===id});
+}
+function ownerBalance(owner){
+ return activeTransactions().filter(function(t){return t.owner===owner}).reduce(function(sum,t){return sum+Number(t.miles);},0);
+}
+function typeLabel(t){
+ return {flight:"Flight","card_company":"Company card","card_personal":"Personal card",other_earning:"Other earning",redemption:"Award / redemption",adjustment:"Adjustment"}[t]||t;
+}
+function details(t){
+ if(t.type==="flight") return esc((t.airline+" "+t.flight).trim())+"<br>"+esc(t.route)+(t.description?"<br><span class='small'>"+esc(t.description)+"</span>":"");
+ if(t.type==="card_company"||t.type==="card_personal") return esc(t.card||"Credit card")+(t.description?"<br><span class='small'>"+esc(t.description)+"</span>":"");
+ return esc(t.description||"");
+}
+function renderPrograms(){
+ var s=$("programSelect");
+ s.innerHTML=state.programs.map(function(p){return "<option value='"+esc(p.id)+"'>"+esc(p.name)+"</option>"}).join("");
+ s.value=state.activeProgramId;
+ var p=activeProgram();
+ $("totalLabel").textContent="Net "+p.unit+" in "+p.name;
+ document.title=p.name+" · Loyalty Ledger";
+}
+function render(){
+ renderPrograms();
+ var tx=activeTransactions();
+ var total=tx.reduce(function(s,t){return s+Number(t.miles)},0);
+ var biz=ownerBalance("business"), per=ownerBalance("personal");
+ $("total").textContent=fmt(total);
+ $("business").textContent=fmt(biz);
+ $("personal").textContent=fmt(per);
+ $("business").className="value "+(biz<0?"negative":"");
+ $("personal").className="value "+(per<0?"negative":"");
+ $("count").textContent=tx.length+" transaction"+(tx.length===1?"":"s");
+ if(!tx.length){
+  $("tableWrap").innerHTML="<div class='empty'>No transactions recorded for "+esc(activeProgram().name)+".</div>";
+  return;
+ }
+ var a=tx.slice().sort(function(x,y){return y.date.localeCompare(x.date)||String(y.id).localeCompare(String(x.id))});
+ var rows=a.map(function(t){
+  return "<tr><td>"+esc(t.date)+"</td><td><span class='pill "+(t.miles<0?"spend":"earn")+"'>"+typeLabel(t.type)+"</span></td><td>"+details(t)+"</td><td>"+(t.miles>0?"+":"")+fmt(t.miles)+"</td><td><span class='pill "+(t.owner==="business"?"b":"p")+"'>"+(t.owner==="business"?"Company":"Personal")+"</span></td><td><button class='secondary' type='button' onclick=\"editTx('"+t.id+"')\">Edit</button> <button class='danger' type='button' onclick=\"removeTx('"+t.id+"')\">Delete</button></td></tr>";
+ }).join("");
+ $("tableWrap").innerHTML="<table><thead><tr><th>Date</th><th>Type</th><th>Details</th><th>"+esc(activeProgram().unit)+"</th><th>Ownership</th><th>Actions</th></tr></thead><tbody>"+rows+"</tbody></table>";
+}
+function setForm(t){
+ $("editId").value=t?t.id:"";
+ $("type").value=t?t.type:"flight";
+ $("date").value=t?t.date:"";
+ $("miles").value=t?(t.miles):"";
+ $("owner").value=t?t.owner:"business";
+ $("airline").value=t?t.airline:"";
+ $("flight").value=t?t.flight:"";
+ $("route").value=t?t.route:"";
+ $("card").value=t?t.card:"";
+ $("description").value=t?t.description:"";
+ updateFields();
+ $("submitBtn").textContent=t?"Save changes":"Add transaction";
+ $("cancelEdit").style.display=t?"inline-block":"none";
+ if(t) window.scrollTo({top:0,behavior:"smooth"});
+}
+function updateFields(){
+ var t=$("type").value;
+ $("flightFields").style.display=t==="flight"?"contents":"none";
+ $("cardFields").style.display=(t==="card_company"||t==="card_personal")?"contents":"none";
+ if(t==="card_company") $("owner").value="business";
+ if(t==="card_personal") $("owner").value="personal";
+ $("miles").placeholder=t==="redemption"?"e.g. -50000":"e.g. 3500";
+}
+window.editTx=function(id){
+ var t=state.transactions.find(function(x){return x.id===id});
+ if(t) setForm(t);
+};
+window.removeTx=function(id){
+ if(confirm("Delete this transaction?")){
+  state.transactions=state.transactions.filter(function(t){return t.id!==id});
+  save();
+ }
+};
+$("type").addEventListener("change",updateFields);
+$("cancelEdit").addEventListener("click",function(){setForm(null)});
+$("txForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ var id=$("editId").value;
+ var type=$("type").value;
+ var miles=Number($("miles").value);
+ if(type==="redemption"&&miles>0) miles=-miles;
+ var obj={
+  id:id||uid(),
+  programId:activeProgram().id,
+  date:$("date").value,
+  type:type,
+  miles:miles,
+  owner:$("owner").value,
+  airline:$("airline").value.trim(),
+  flight:$("flight").value.trim(),
+  route:$("route").value.trim(),
+  card:$("card").value.trim(),
+  description:$("description").value.trim()
+ };
+ if(!obj.date){alert("Please enter a date.");return}
+ if(!Number.isFinite(miles)){alert("Please enter a valid mileage amount.");return}
+ if(id){
+  var idx=state.transactions.findIndex(function(x){return x.id===id});
+  if(idx>=0) state.transactions[idx]=obj;
+ }else{
+  state.transactions.push(obj);
+ }
+ setForm(null);
+ save();
+});
+$("programSelect").addEventListener("change",function(){
+ state.activeProgramId=$("programSelect").value;
+ save();
+ setForm(null);
+});
+$("reconcileBtn").addEventListener("click",function(){
+ var entered=Number($("balance").value);
+ if(!Number.isFinite(entered)){alert("Enter the current account balance.");return}
+ var total=activeTransactions().reduce(function(s,t){return s+Number(t.miles)},0);
+ var d=entered-total;
+ $("reconcileResult").textContent=entered===total?"✓ Matches your ledger.":"Difference: "+(d>0?"+":"")+fmt(d)+" "+activeProgram().unit;
+});
+window.showHistory=function(owner){
+ var a=activeTransactions().filter(function(t){return t.owner===owner}).sort(function(x,y){return x.date.localeCompare(y.date)||String(x.id).localeCompare(String(y.id))});
+ var b=0;
+ $("historyTitle").textContent=(owner==="business"?"Company":"Personal")+" balance history · "+activeProgram().name;
+ $("historyBalance").textContent=fmt(ownerBalance(owner));
+ var html="<table><thead><tr><th>Date</th><th>Transaction</th><th>Change</th><th>Balance</th></tr></thead><tbody>";
+ a.forEach(function(t){
+  b+=Number(t.miles);
+  html+="<tr><td>"+esc(t.date)+"</td><td>"+typeLabel(t.type)+"<br><span class='small'>"+details(t).replace(/<br>/g," · ")+"</span></td><td>"+(t.miles>0?"+":"")+fmt(t.miles)+"</td><td class='"+(b<0?"negative":"")+"'>"+fmt(b)+"</td></tr>";
+ });
+ html+="</tbody></table>";
+ $("historyTable").innerHTML=a.length?html:"<div class='empty'>No transactions for this category.</div>";
+ $("historyWarning").innerHTML=ownerBalance(owner)<0?"<div class='alert'>⚠️ This ownership balance is negative. The ledger still reconciles mathematically, but the allocation may be worth reviewing.</div>":"";
+ $("historyModal").classList.add("open");
+};
+window.closeHistory=function(){$("historyModal").classList.remove("open")};
+
+$("managePrograms").addEventListener("click",function(){renderProgramList();$("programModal").classList.add("open")});
+window.closePrograms=function(){$("programModal").classList.remove("open")};
+function renderProgramList(){
+ $("programList").innerHTML=state.programs.map(function(p){
+  var n=state.transactions.filter(function(t){return t.programId===p.id}).length;
+  var del=p.id==="miles-more"?"<span class='small'>Default program</span>":"<button class='danger' type='button' onclick=\"deleteProgram('"+p.id+"')\">Delete</button>";
+  return "<div class='panel' style='padding:12px;margin-bottom:8px'><strong>"+esc(p.name)+"</strong><div class='small'>"+esc(p.unit)+" · "+n+" transaction"+(n===1?"":"s")+"</div><div class='actions' style='margin-top:8px'>"+del+"</div></div>";
+ }).join("");
+}
+window.deleteProgram=function(id){
+ if(state.transactions.some(function(t){return t.programId===id})){alert("This program has transactions. Delete those transactions before deleting the program.");return}
+ if(confirm("Delete this loyalty program?")){
+  state.programs=state.programs.filter(function(p){return p.id!==id});
+  if(state.activeProgramId===id) state.activeProgramId=state.programs[0].id;
+  save();renderProgramList();
+ }
+};
+$("programForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ var name=$("newProgram").value.trim();
+ var unit=$("newUnit").value.trim()||"miles";
+ if(!name){alert("Enter a program name.");return}
+ var p={id:uid(),name:name,unit:unit};
+ state.programs.push(p);
+ state.activeProgramId=p.id;
+ $("newProgram").value="";
+ $("newUnit").value="miles";
+ save();renderProgramList();closePrograms();
+});
+function download(name,data,type){
+ var a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([data],{type:type}));
+ a.download=name;a.click();
+ setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
+}
+$("exportBtn").addEventListener("click",function(){
+ var p=activeProgram();
+ var rows=[["Program","Unit","Date","Type","Airline","Flight","Route","Card","Miles","Ownership","Description"]];
+ activeTransactions().forEach(function(t){rows.push([p.name,p.unit,t.date,typeLabel(t.type),t.airline,t.flight,t.route,t.card,t.miles,t.owner==="business"?"Company":"Personal",t.description])});
+ var csv=rows.map(function(r){return r.map(function(x){return '"'+String(x==null?"":x).replace(/"/g,'""')+'"'}).join(",")}).join("\n");
+ download("loyalty-ledger-"+p.name.replace(/[^a-z0-9]+/gi,"-")+".csv",csv,"text/csv");
+});
+$("backupBtn").addEventListener("click",function(){download("loyalty-ledger-backup.json",JSON.stringify(state,null,2),"application/json")});
+$("restore").addEventListener("change",function(e){
+ var f=e.target.files[0];if(!f)return;
+ var r=new FileReader();
+ r.onload=function(){
+  try{
+   var x=JSON.parse(r.result);
+   if(!x||!Array.isArray(x.programs)||!Array.isArray(x.transactions)) throw new Error();
+   state=x;save();alert("Backup restored.");
+  }catch(err){alert("Invalid backup file.")}
+ };
+ r.readAsText(f);
+});
+$("clearBtn").addEventListener("click",function(){
+ if(confirm("Delete ALL transactions across ALL loyalty programs?")){
+  state.transactions=[];save();
+ }
+});
+
+if(migrationNotice){
+ $("migrationNotice").innerHTML="<div class='notice'>✓ "+esc(migrationNotice)+"</div>";
+ try{localStorage.setItem(DATA_KEY,JSON.stringify(state))}catch(e){}
+}
+render();
+updateFields();
+
+})();
+</script>
+</body>
+</html>
