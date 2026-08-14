@@ -5,21 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d3d3d">
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/milesplit-icon.png">
 <title>MileSplit</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#173033;background:#f2f7f6;--deep:#0d3d3d;--teal:#118c8c;--sea:#3dbfae;--company:#118c8c;--personal:#3dbfae;--amber:#f5b824;--red:#d94b4b;--border:#dbe7e5}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;min-height:100vh}
 .wrap{max-width:1040px;margin:auto;padding:12px 14px 48px}
-header{background:var(--deep);color:#fff;margin:-12px -14px 14px;padding:12px 14px;box-shadow:0 2px 8px #0002}
-.brandbar{display:flex;align-items:center;gap:9px;min-height:40px}.brand-icon{width:32px;height:24px;position:relative;flex:none;border-radius:5px;background:linear-gradient(90deg,var(--teal) 0 70%,var(--sea) 70%);overflow:hidden}
-.brand-icon:before{content:"";position:absolute;left:70%;top:0;bottom:0;border-left:2px dashed rgba(255,255,255,.85)}
-.brand-icon:after{content:"";position:absolute;left:6px;right:3px;top:50%;border-top:2px solid rgba(255,255,255,.14)}
-.brandname{font-size:20px;font-weight:800;letter-spacing:-.02em}
+header{background:var(--deep);color:#fff;margin:-12px -14px 14px;padding:10px 14px;box-shadow:0 2px 8px #0002}
+.brandbar{display:flex;align-items:center;gap:9px;min-height:42px}.brand-icon-img{width:38px;height:38px;display:block;object-fit:cover;border-radius:9px;flex:none}
+.brandname{font-size:21px;font-weight:800;letter-spacing:-.025em}
 .programbar{display:flex;gap:8px;align-items:center;margin-bottom:14px}.programbar>div{flex:1;min-width:0}.programbar label{display:block;font-size:12px;color:#657778;font-weight:700;margin-bottom:4px}
 select,input{width:100%;margin-top:4px;padding:10px 11px;border:1px solid #cad9d7;border-radius:9px;background:#fff;font:16px/1.25 inherit;color:#173033;min-height:42px}
 button{border:0;border-radius:9px;padding:10px 13px;font:600 16px/1.2 inherit;cursor:pointer;min-height:42px}.primary{background:var(--deep);color:#fff}.secondary{background:#e5efed;color:var(--deep)}.danger{background:#fae8e8;color:#9f3030}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}.card{background:#fff;border:1px solid var(--border);border-radius:13px;padding:13px;box-shadow:0 1px 3px #0001}.label{font-size:12px;color:#657778}.value{font-size:23px;font-weight:800;margin-top:4px}.business{border-top:3px solid var(--company)}.personal{border-top:3px solid var(--personal)}.total{border-top:3px solid var(--amber)}.negative{color:#a52d2d}
-.panel{background:#fff;border:1px solid var(--border);border-radius:13px;padding:15px;margin-bottom:14px;box-shadow:0 1px 3px #0001}.panel h2{font-size:17px;margin:0 0 12px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:10px}.card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;box-shadow:0 1px 3px #0001;cursor:pointer}.label{font-size:12px;color:#657778}.value{font-size:23px;font-weight:800;margin-top:4px}.card-hint{font-size:10px;color:#7a8a89;margin-top:4px}.business{border-top:3px solid var(--company)}.personal{border-top:3px solid var(--personal)}.total{border-top:3px solid var(--amber)}.negative{color:#a52d2d}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 14px}.quick-actions button{width:100%}.panel{background:#fff;border:1px solid var(--border);border-radius:11px;padding:15px;margin-bottom:14px;box-shadow:0 1px 3px #0001}.panel h2{font-size:17px;margin:0 0 12px}
 .sectionline{display:flex;justify-content:space-between;align-items:center;gap:8px}.small{font-size:12px;color:#6a7a7a;line-height:1.45}
 form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.full{grid-column:1/-1}.actions{display:flex;gap:7px;flex-wrap:wrap}
 .recent-list{margin:0;padding:0;list-style:none}.recent-item{display:grid;grid-template-columns:78px 1fr auto;gap:9px;align-items:center;padding:10px 0;border-bottom:1px solid #edf2f1}.recent-item:last-child{border-bottom:0}.recent-date{font-size:12px;color:#708080}.recent-main{min-width:0}.recent-title{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.recent-sub{font-size:11px;color:#718080;margin-top:2px}.amount{text-align:right;font-weight:750;white-space:nowrap}.amount.pos{color:#16844c}.amount.neg{color:#c63d3d}.owner{font-size:10px;font-weight:700}.owner.company{color:#118c8c}.owner.personal{color:#249f8d}
@@ -31,13 +30,13 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 .modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:14px;z-index:10}.modal.open{display:flex}.modalbox{background:#fff;border-radius:15px;max-width:850px;width:100%;max-height:90vh;overflow:auto;padding:17px}.close{float:right}.historybar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
 .notice{background:#e7f5ef;color:#286b55;border-radius:9px;padding:9px 11px;margin-bottom:12px;font-size:13px}.toast{position:fixed;z-index:20;left:50%;top:14px;transform:translate(-50%,-20px);opacity:0;background:#e7f5ef;color:#17684f;border:1px solid #b7e2d2;border-radius:999px;padding:10px 16px;font-weight:750;box-shadow:0 5px 20px #0002;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}.toast .check{display:inline-block;margin-right:5px;animation:pop .3s ease-out}@keyframes pop{0%{transform:scale(.5)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
 .program-row{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #e7eeec;padding:10px 0}.program-row:last-child{border-bottom:0}
-@media(max-width:600px){.wrap{padding:10px 11px 40px}header{margin:-10px -11px 12px;padding:10px 11px}.cards{grid-template-columns:1fr 1fr}.cards .total{grid-column:1/-1}.value{font-size:21px}.programbar{gap:6px}.programbar button{white-space:nowrap;padding-left:10px;padding-right:10px}.recent-item{grid-template-columns:58px 1fr auto}.recent-title{font-size:14px}.recent-sub{font-size:10px}form{grid-template-columns:1fr}.full{grid-column:auto}.reconcile{display:block}.reconcile button{margin-top:7px;width:100%}table{display:block;overflow-x:auto;white-space:nowrap}.historybar{align-items:flex-start;flex-direction:column}}
+@media(max-width:600px){.quick-actions{gap:7px}.wrap{padding:10px 11px 40px}header{margin:-10px -11px 12px;padding:10px 11px}.cards{grid-template-columns:1fr 1fr}.cards .total{grid-column:1/-1}.value{font-size:21px}.programbar{gap:6px}.programbar button{white-space:nowrap;padding-left:10px;padding-right:10px}.recent-item{grid-template-columns:58px 1fr auto}.recent-title{font-size:14px}.recent-sub{font-size:10px}form{grid-template-columns:1fr}.full{grid-column:auto}.reconcile{display:block}.reconcile button{margin-top:7px;width:100%}table{display:block;overflow-x:auto;white-space:nowrap}.historybar{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body>
 <div id="toast" class="toast"><span class="check">✓</span><span id="toastText"></span></div>
 <div class="wrap">
-<header><div class="brandbar"><div class="brand-icon" aria-hidden="true"></div><div class="brandname">MileSplit</div></div></header>
+<header><div class="brandbar"><img class="brand-icon-img" src="assets/milesplit-icon.png" alt=""><div class="brandname">MileSplit</div></div></header>
 
 <div id="migrationNotice"></div>
 
@@ -47,9 +46,18 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 </section>
 
 <section class="cards">
-<div class="card total"><div class="label" id="totalLabel">Net balance</div><div class="value" id="total">0</div></div>
-<div class="card business" onclick="showHistory('business')"><div class="label" id="companyLabel">Company balance · tap for history</div><div class="value" id="business">0</div></div>
-<div class="card personal" onclick="showHistory('personal')"><div class="label" id="personalLabel">Personal balance · tap for history</div><div class="value" id="personal">0</div></div>
+<div class="card business" onclick="showHistory('business')"><div class="label" id="companyLabel">Company balance</div><div class="value" id="business">0</div><div class="card-hint">History</div></div>
+<div class="card personal" onclick="showHistory('personal')"><div class="label" id="personalLabel">Personal balance</div><div class="value" id="personal">0</div><div class="card-hint">History</div></div>
+<div class="card total"><div class="label" id="totalLabel">Net balance</div><div class="value" id="total">0</div><div class="card-hint">&nbsp;</div></div>
+</section>
+<section class="quick-actions">
+<button class="primary" id="quickAddBtn" type="button">Add transaction</button>
+<button class="secondary" id="quickHistoryBtn" type="button">View history</button>
+</section>
+
+<section class="panel">
+<div class="sectionline"><h2 id="recentHeading">Recent transactions</h2><button class="linkbtn" id="viewAllBtn" type="button">View all</button></div>
+<div id="recentWrap"></div>
 </section>
 
 <section class="panel">
@@ -75,11 +83,6 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <label class="full" id="descriptionLabel">Description<input id="description"></label>
 <div class="full actions"><button class="primary" id="submitBtn" type="submit">Add transaction</button><button class="secondary" id="cancelEdit" type="button" style="display:none">Cancel edit</button></div>
 </form>
-</section>
-
-<section class="panel">
-<div class="sectionline"><h2 id="recentHeading">Recent transactions</h2><button class="linkbtn" id="viewAllBtn" type="button">View all</button></div>
-<div id="recentWrap"></div>
 </section>
 
 <section class="panel" id="allHistoryPanel" style="display:none">
@@ -197,7 +200,7 @@ function renderPrograms(){
 }
 function applyI18n(){
  document.documentElement.lang=lang;
- $("programLabel").textContent=tr("program");$("managePrograms").textContent=tr("manage");$("companyLabel").textContent=tr("company");$("personalLabel").textContent=tr("personal");
+ $("programLabel").textContent=tr("program");$("managePrograms").textContent=tr("manage");$("quickAddBtn").textContent=tr("add");$("quickHistoryBtn").textContent=tr("viewAll");$("companyLabel").textContent=tr("company");$("personalLabel").textContent=tr("personal");
  $("addHeading").textContent=$( "editId").value?tr("edit"):tr("add");$("signHint").textContent=tr("positive");$("typeLabel").childNodes[0].textContent=tr("type")+" ";$("dateLabel").childNodes[0].textContent=tr("date")+" ";$("milesLabel").childNodes[0].textContent=tr("amount")+" ";$("ownerLabel").childNodes[0].textContent=tr("ownership")+" ";
  $("owner").innerHTML="<option value='business'>"+tr("Company")+"</option><option value='personal'>"+tr("Personal")+"</option>";
  $("airlineLabel").childNodes[0].textContent=tr("airline")+" ";$("flightLabel").childNodes[0].textContent=tr("flightNo")+" ";$("routeLabel").childNodes[0].textContent=tr("route")+" ";$("hotelLabel").childNodes[0].textContent=tr("hotelName")+" ";$("locationLabel").childNodes[0].textContent=tr("location")+" ";$("cardLabel").childNodes[0].textContent=tr("card")+" ";$("descriptionLabel").childNodes[0].textContent=tr("description")+" ";
@@ -218,7 +221,7 @@ function updateFields(){
 }
 function render(){
  renderPrograms();var p=activeProgram(),tx=activeTx(),total=tx.reduce(function(s,t){return s+Number(t.miles)},0),biz=balance("business"),per=balance("personal");
- $("totalLabel").textContent=tr("net")+" · "+p.name;$("total").textContent=fmt(total);$("business").textContent=fmt(biz);$("personal").textContent=fmt(per);$("business").className="value "+(biz<0?"negative":"");$("personal").className="value "+(per<0?"negative");
+ $("totalLabel").textContent=tr("net")+" · "+p.name;$("total").textContent=fmt(total);$("business").textContent=fmt(biz);$("personal").textContent=fmt(per);$("business").className="value "+(biz<0?"negative":"");$("personal").className="value "+(per<0?"negative":"");
  var sorted=tx.slice().sort(function(a,b){return b.date.localeCompare(a.date)||String(b.id).localeCompare(String(a.id))});
  if(!sorted.length){$("recentWrap").innerHTML="<div class='empty'>"+tr("noRecent",{program:esc(p.name)})+"</div>";return}
  $("recentWrap").innerHTML="<ul class='recent-list'>"+sorted.slice(0,4).map(function(t){return "<li class='recent-item'><div class='recent-date'>"+esc(t.date)+"</div><div class='recent-main'><div class='recent-title'>"+esc(typeLabel(t))+"</div><div class='recent-sub'>"+details(t)+"</div></div><div class='amount "+(t.miles<0?"neg":"pos")+"'>"+(t.miles>0?"+":"")+fmt(t.miles)+"<div class='owner "+(t.owner==="business"?"company":"personal")+"'>"+tr(t.owner==="business"?"Company":"Personal")+"</div></div></li>"}).join("")+"</ul>";
@@ -237,6 +240,8 @@ $("txForm").addEventListener("submit",function(e){
  setForm(null);save();toast(id?tr("updateCheck"):tr("addCheck",{n:fmt(Math.abs(miles)),unit:activeProgram().unit}));
 });
 $("cancelEdit").addEventListener("click",function(){setForm(null);applyI18n()});$("type").addEventListener("change",updateFields);
+$("quickAddBtn").addEventListener("click",function(){ $("date").focus(); $("txForm").scrollIntoView({behavior:"smooth",block:"start"}); });
+$("quickHistoryBtn").addEventListener("click",function(){ $("viewAllBtn").click(); });
 $("programSelect").addEventListener("change",function(){state.activeProgramId=this.value;save();setForm(null);$("allHistoryPanel").style.display="none"});
 $("viewAllBtn").addEventListener("click",function(){$("allHistoryPanel").style.display="block";renderHistory();$("allHistoryPanel").scrollIntoView({behavior:"smooth",block:"start"})});
 $("hideHistoryBtn").addEventListener("click",function(){$("allHistoryPanel").style.display="none"});
