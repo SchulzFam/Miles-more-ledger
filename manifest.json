@@ -1,1 +1,9 @@
-{"name":"Loyalty Ledger","short_name":"Loyalty Ledger","start_url":".","display":"standalone","background_color":"#f4f6f8","theme_color":"#17324d"}
+{
+  "name": "MileSplit",
+  "short_name": "MileSplit",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f2f7f6",
+  "theme_color": "#0d3d3d",
+  "icons": []
+}

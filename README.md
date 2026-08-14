@@ -1,21 +1,22 @@
-# Loyalty Ledger v0.4 (fixed)
+# MileSplit v0.5
 
-This is the corrected v4 build.
+MileSplit is a local-first loyalty ledger for separating Company and Personal loyalty-program balances.
 
-### Included
+## v0.5
+- MileSplit branding and compact header
+- Deep Teal visual direction
 - Multiple loyalty programs
-- Miles & More as the default program
-- Automatic migration of v1/v2/v3 transaction data into Miles & More
-- Company/personal ownership
-- Company/personal balance history
-- Negative ownership balances allowed
-- Transaction editing and deletion
-- CSV export
-- JSON backup/restore
-- Reconciliation
-- Local-first storage
+- English/German localization with automatic browser/phone-language detection
+- Manual language override infrastructure (English/German dictionaries; automatic mode currently selected by the app)
+- Flight, Hotel, Credit Card, Other Earning, Award/Redemption and Adjustment transaction types
+- Latest 4 transactions on dashboard
+- Full history grouped by year
+- Company/Personal balance history
+- iPhone form fields use 16px text to prevent iOS focus zoom
+- Success confirmation after adding/editing transactions
+- Program selector and Manage Programs side-by-side
+- CSV export and JSON backup/restore
+- v4 local data migration
 
-### Important
-The app migrates legacy transactions only once into the new v4 storage. It does not delete the old storage, so the old data remains available as a fallback.
-
-Replace `index.html`, `manifest.json`, and `README.md` in the existing GitHub Pages repository.
+## Updating GitHub Pages
+Replace `index.html`, `manifest.json`, and `README.md` in the existing repository. Do not clear the browser's site data: v5 reads the `loyalty-ledger-v4` data created by v4 and migrates it into v5 storage.

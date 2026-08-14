@@ -2,108 +2,124 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#17324d">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d3d3d">
 <link rel="manifest" href="manifest.json">
-<title>Loyalty Ledger</title>
+<title>MileSplit</title>
 <style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17202a;background:#f4f6f8;--navy:#17324d;--muted:#697586}
-*{box-sizing:border-box}body{margin:0}.wrap{max-width:1050px;margin:auto;padding:20px 16px 60px}
-header{background:var(--navy);color:#fff;margin:-20px -16px 20px;padding:24px 16px}.brand{font-size:13px;opacity:.8;text-transform:uppercase;letter-spacing:.08em}.title{font-size:28px;font-weight:750;margin-top:5px}
-.toolbar{display:flex;gap:10px;align-items:end;margin-bottom:16px}.toolbar>div{flex:1}
-label{font-size:13px;color:#4d5966;font-weight:600}select,input{width:100%;margin-top:6px;padding:11px 12px;border:1px solid #d4dae1;border-radius:9px;background:#fff;font:inherit}
-button{border:0;border-radius:9px;padding:10px 13px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--navy);color:#fff}.secondary{background:#e9eef3;color:#17324d}.danger{background:#fbe8e8;color:#a32929}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px #0001;cursor:pointer}.label{font-size:13px;color:var(--muted)}.value{font-size:24px;font-weight:750;margin-top:5px}.business{border-top:4px solid #4b78a8}.personal{border-top:4px solid #6c9b75}.total{border-top:4px solid #d8a928}.negative{color:#a32929}
-.panel{background:#fff;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px #0001}.panel h2{font-size:18px;margin:0 0 14px}
-form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.full{grid-column:1/-1}.actions{display:flex;gap:8px;flex-wrap:wrap}
-table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:10px 7px;border-bottom:1px solid #e7eaee;vertical-align:top}th{color:var(--muted);font-size:12px;text-transform:uppercase}
-.pill{display:inline-block;padding:4px 8px;border-radius:99px;font-size:12px;font-weight:700}.pill.b{background:#e8f0f8;color:#315d85}.pill.p{background:#e9f3eb;color:#477052}.pill.earn{background:#eef4fb;color:#315d85}.pill.spend{background:#fbefef;color:#9a3b3b}
-.empty{text-align:center;color:var(--muted);padding:25px}.small{font-size:12px;color:var(--muted);line-height:1.5}.sectionline{display:flex;justify-content:space-between;gap:10px;align-items:center}
-.reconcile{display:flex;gap:10px;align-items:end}.reconcile>div{flex:1}.match{margin-top:12px;font-weight:700}
-.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}.modal.open{display:flex}.modalbox{background:#fff;border-radius:16px;max-width:850px;width:100%;max-height:90vh;overflow:auto;padding:20px}.close{float:right}.historybar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.alert{background:#fff5dc;border-radius:10px;padding:10px 12px;margin-top:10px;color:#815500;font-size:13px}
-.notice{background:#eaf4ec;border-radius:10px;padding:10px 12px;color:#3e6945;font-size:13px;margin-bottom:14px}
-@media(max-width:700px){.toolbar{display:block}.toolbar button{margin-top:8px}.cards{grid-template-columns:1fr 1fr}.cards .total{grid-column:1/-1}.value{font-size:21px}form{grid-template-columns:1fr}table{display:block;overflow-x:auto;white-space:nowrap}.reconcile{display:block}.reconcile button{margin-top:10px}.full{grid-column:auto}.sectionline,.historybar{align-items:flex-start;flex-direction:column}}
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#173033;background:#f2f7f6;--deep:#0d3d3d;--teal:#118c8c;--sea:#3dbfae;--company:#118c8c;--personal:#3dbfae;--amber:#f5b824;--red:#d94b4b;--border:#dbe7e5}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;min-height:100vh}
+.wrap{max-width:1040px;margin:auto;padding:12px 14px 48px}
+header{background:var(--deep);color:#fff;margin:-12px -14px 14px;padding:12px 14px;box-shadow:0 2px 8px #0002}
+.brandbar{display:flex;align-items:center;gap:9px;min-height:40px}.brand-icon{width:32px;height:24px;position:relative;flex:none;border-radius:5px;background:linear-gradient(90deg,var(--teal) 0 70%,var(--sea) 70%);overflow:hidden}
+.brand-icon:before{content:"";position:absolute;left:70%;top:0;bottom:0;border-left:2px dashed rgba(255,255,255,.85)}
+.brand-icon:after{content:"";position:absolute;left:6px;right:3px;top:50%;border-top:2px solid rgba(255,255,255,.14)}
+.brandname{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.programbar{display:flex;gap:8px;align-items:center;margin-bottom:14px}.programbar>div{flex:1;min-width:0}.programbar label{display:block;font-size:12px;color:#657778;font-weight:700;margin-bottom:4px}
+select,input{width:100%;margin-top:4px;padding:10px 11px;border:1px solid #cad9d7;border-radius:9px;background:#fff;font:16px/1.25 inherit;color:#173033;min-height:42px}
+button{border:0;border-radius:9px;padding:10px 13px;font:600 16px/1.2 inherit;cursor:pointer;min-height:42px}.primary{background:var(--deep);color:#fff}.secondary{background:#e5efed;color:var(--deep)}.danger{background:#fae8e8;color:#9f3030}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}.card{background:#fff;border:1px solid var(--border);border-radius:13px;padding:13px;box-shadow:0 1px 3px #0001}.label{font-size:12px;color:#657778}.value{font-size:23px;font-weight:800;margin-top:4px}.business{border-top:3px solid var(--company)}.personal{border-top:3px solid var(--personal)}.total{border-top:3px solid var(--amber)}.negative{color:#a52d2d}
+.panel{background:#fff;border:1px solid var(--border);border-radius:13px;padding:15px;margin-bottom:14px;box-shadow:0 1px 3px #0001}.panel h2{font-size:17px;margin:0 0 12px}
+.sectionline{display:flex;justify-content:space-between;align-items:center;gap:8px}.small{font-size:12px;color:#6a7a7a;line-height:1.45}
+form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.full{grid-column:1/-1}.actions{display:flex;gap:7px;flex-wrap:wrap}
+.recent-list{margin:0;padding:0;list-style:none}.recent-item{display:grid;grid-template-columns:78px 1fr auto;gap:9px;align-items:center;padding:10px 0;border-bottom:1px solid #edf2f1}.recent-item:last-child{border-bottom:0}.recent-date{font-size:12px;color:#708080}.recent-main{min-width:0}.recent-title{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.recent-sub{font-size:11px;color:#718080;margin-top:2px}.amount{text-align:right;font-weight:750;white-space:nowrap}.amount.pos{color:#16844c}.amount.neg{color:#c63d3d}.owner{font-size:10px;font-weight:700}.owner.company{color:#118c8c}.owner.personal{color:#249f8d}
+.recent-more{margin-top:9px;text-align:center}.linkbtn{background:none;border:0;color:var(--teal);padding:5px;font-size:14px;font-weight:700}
+details.year{border-top:1px solid #e5eceb}.year summary{cursor:pointer;padding:12px 2px;font-weight:750;list-style:none}.year summary::-webkit-details-marker{display:none}.year summary:before{content:"›";display:inline-block;width:18px;font-size:20px;transition:.15s}.year[open] summary:before{transform:rotate(90deg)}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 6px;border-bottom:1px solid #e7eeec;vertical-align:top}th{color:#708080;font-size:11px;text-transform:uppercase}
+.pill{display:inline-block;padding:4px 7px;border-radius:99px;font-size:11px;font-weight:700}.pill.b{background:#e5f2f2;color:#0b7777}.pill.p{background:#e4f6f1;color:#21846f}.pill.earn{background:#e7f5ef;color:#17834b}.pill.spend{background:#fae9e9;color:#a93434}
+.empty{text-align:center;color:#718080;padding:20px}.reconcile{display:flex;gap:8px;align-items:end}.reconcile>div{flex:1}.match{margin-top:10px;font-weight:700}.alert{background:#fff5dc;border-radius:9px;padding:9px 11px;margin-top:9px;color:#815500;font-size:12px}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:14px;z-index:10}.modal.open{display:flex}.modalbox{background:#fff;border-radius:15px;max-width:850px;width:100%;max-height:90vh;overflow:auto;padding:17px}.close{float:right}.historybar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+.notice{background:#e7f5ef;color:#286b55;border-radius:9px;padding:9px 11px;margin-bottom:12px;font-size:13px}.toast{position:fixed;z-index:20;left:50%;top:14px;transform:translate(-50%,-20px);opacity:0;background:#e7f5ef;color:#17684f;border:1px solid #b7e2d2;border-radius:999px;padding:10px 16px;font-weight:750;box-shadow:0 5px 20px #0002;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}.toast .check{display:inline-block;margin-right:5px;animation:pop .3s ease-out}@keyframes pop{0%{transform:scale(.5)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.program-row{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #e7eeec;padding:10px 0}.program-row:last-child{border-bottom:0}
+@media(max-width:600px){.wrap{padding:10px 11px 40px}header{margin:-10px -11px 12px;padding:10px 11px}.cards{grid-template-columns:1fr 1fr}.cards .total{grid-column:1/-1}.value{font-size:21px}.programbar{gap:6px}.programbar button{white-space:nowrap;padding-left:10px;padding-right:10px}.recent-item{grid-template-columns:58px 1fr auto}.recent-title{font-size:14px}.recent-sub{font-size:10px}form{grid-template-columns:1fr}.full{grid-column:auto}.reconcile{display:block}.reconcile button{margin-top:7px;width:100%}table{display:block;overflow-x:auto;white-space:nowrap}.historybar{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body>
+<div id="toast" class="toast"><span class="check">✓</span><span id="toastText"></span></div>
 <div class="wrap">
-<header><div class="brand">Personal travel & loyalty ledger</div><div class="title">Loyalty Ledger</div></header>
+<header><div class="brandbar"><div class="brand-icon" aria-hidden="true"></div><div class="brandname">MileSplit</div></div></header>
 
 <div id="migrationNotice"></div>
 
-<section class="toolbar">
-<div><label>Active loyalty program<select id="programSelect"></select></label></div>
+<section class="programbar">
+<div><label id="programLabel" for="programSelect">Active loyalty program</label><select id="programSelect"></select></div>
 <button class="secondary" id="managePrograms" type="button">Manage programs</button>
 </section>
 
 <section class="cards">
 <div class="card total"><div class="label" id="totalLabel">Net balance</div><div class="value" id="total">0</div></div>
-<div class="card business" onclick="showHistory('business')"><div class="label">Company balance · tap for history</div><div class="value" id="business">0</div></div>
-<div class="card personal" onclick="showHistory('personal')"><div class="label">Personal balance · tap for history</div><div class="value" id="personal">0</div></div>
+<div class="card business" onclick="showHistory('business')"><div class="label" id="companyLabel">Company balance · tap for history</div><div class="value" id="business">0</div></div>
+<div class="card personal" onclick="showHistory('personal')"><div class="label" id="personalLabel">Personal balance · tap for history</div><div class="value" id="personal">0</div></div>
 </section>
 
 <section class="panel">
-<div class="sectionline"><h2>Add transaction</h2><span class="small">Positive = earned · Negative = spent</span></div>
+<div class="sectionline"><h2 id="addHeading">Add transaction</h2><span class="small" id="signHint">Positive = earned · Negative = spent</span></div>
 <form id="txForm">
 <input type="hidden" id="editId">
-<label>Type<select id="type">
-<option value="flight">✈️ Flight earning</option>
-<option value="card_company">💳 Company credit card</option>
-<option value="card_personal">💳 Personal credit card</option>
-<option value="other_earning">🎁 Other earning</option>
-<option value="redemption">🎟️ Award / redemption</option>
-<option value="adjustment">↔️ Adjustment</option>
-</select></label>
-<label>Date<input id="date" type="date" required></label>
-<label>Miles / points<input id="miles" type="number" step="1" required placeholder="e.g. 3500"></label>
-<label>Ownership<select id="owner"><option value="business">Company</option><option value="personal">Personal</option></select></label>
+<label id="typeLabel">Type<select id="type"></select></label>
+<label id="dateLabel">Date<input id="date" type="date" required></label>
+<label id="milesLabel">Miles / points<input id="miles" type="number" step="1" required></label>
+<label id="ownerLabel">Ownership<select id="owner"><option value="business">Company</option><option value="personal">Personal</option></select></label>
 <div id="flightFields" style="display:contents">
-<label>Airline<input id="airline" placeholder="e.g. Lufthansa"></label>
-<label>Flight number<input id="flight" placeholder="e.g. LH400"></label>
-<label>Route<input id="route" placeholder="e.g. FRA → JFK"></label>
+<label id="airlineLabel">Airline<input id="airline" placeholder="e.g. Lufthansa"></label>
+<label id="flightLabel">Flight number<input id="flight" placeholder="e.g. LH400"></label>
+<label id="routeLabel">Route<input id="route" placeholder="e.g. FRA → JFK"></label>
+</div>
+<div id="hotelFields" style="display:none;contents">
+<label id="hotelLabel">Hotel / group<input id="hotel" placeholder="e.g. Marriott"></label>
+<label id="locationLabel">Location / stay<input id="location" placeholder="e.g. Frankfurt"></label>
 </div>
 <div id="cardFields" style="display:none">
-<label>Card / account<input id="card" placeholder="e.g. Company card"></label>
+<label id="cardLabel">Card / account<input id="card" placeholder="e.g. Company card"></label>
 </div>
-<label class="full">Description<input id="description" placeholder="Optional note"></label>
+<label class="full" id="descriptionLabel">Description<input id="description"></label>
 <div class="full actions"><button class="primary" id="submitBtn" type="submit">Add transaction</button><button class="secondary" id="cancelEdit" type="button" style="display:none">Cancel edit</button></div>
 </form>
 </section>
 
 <section class="panel">
-<h2>Reconcile with loyalty account</h2>
-<div class="reconcile"><div><label>Current account balance<input id="balance" type="number" min="0" step="1" placeholder="e.g. 142350"></label></div><button class="secondary" id="reconcileBtn" type="button">Check</button></div>
-<div class="match" id="reconcileResult"></div>
-<div class="small">Compares the entered balance with the selected program's ledger. It does not connect to any loyalty program.</div>
+<div class="sectionline"><h2 id="recentHeading">Recent transactions</h2><button class="linkbtn" id="viewAllBtn" type="button">View all</button></div>
+<div id="recentWrap"></div>
+</section>
+
+<section class="panel" id="allHistoryPanel" style="display:none">
+<div class="sectionline"><h2 id="historyHeading">Transaction history</h2><button class="linkbtn" id="hideHistoryBtn" type="button">Hide</button></div>
+<div id="historyWrap"></div>
 </section>
 
 <section class="panel">
-<div class="sectionline"><h2>Transaction history</h2><span class="small" id="count"></span></div>
-<div class="actions" style="margin-bottom:12px">
+<h2 id="reconcileHeading">Reconcile with loyalty account</h2>
+<div class="reconcile"><div><label id="accountBalanceLabel">Current account balance<input id="balance" type="number" min="0" step="1"></label></div><button class="secondary" id="reconcileBtn" type="button">Check</button></div>
+<div class="match" id="reconcileResult"></div><div class="small" id="reconcileHelp">Compares the entered balance with the selected program's ledger. It does not connect to any loyalty program.</div>
+</section>
+
+<section class="panel">
+<h2 id="backupHeading">Data</h2>
+<div class="actions">
 <button class="secondary" id="exportBtn" type="button">Export CSV</button>
 <button class="secondary" id="backupBtn" type="button">Backup data</button>
 <label class="secondary" style="display:inline-block;cursor:pointer">Restore backup<input id="restore" type="file" accept=".json" style="display:none"></label>
 <button class="danger" id="clearBtn" type="button">Clear all transactions</button>
 </div>
-<div id="tableWrap"></div>
 </section>
 </div>
 
 <div class="modal" id="historyModal"><div class="modalbox">
-<button class="secondary close" onclick="closeHistory()" type="button">Close</button>
-<div class="historybar"><div><h2 id="historyTitle" style="margin:0"></h2><div class="small">Running balance for this ownership category</div></div><div class="value" id="historyBalance"></div></div>
+<button class="secondary close" onclick="closeHistory()" type="button" id="closeHistoryBtn">Close</button>
+<div class="historybar"><div><h2 id="historyTitle" style="margin:0"></h2><div class="small" id="historySub">Running balance for this ownership category</div></div><div class="value" id="historyBalance"></div></div>
 <div id="historyWarning"></div><div id="historyTable"></div>
 </div></div>
 
 <div class="modal" id="programModal"><div class="modalbox">
 <button class="secondary close" onclick="closePrograms()" type="button">Close</button>
-<h2>Loyalty programs</h2><div id="programList"></div>
-<div class="panel" style="margin-top:16px;padding:14px;background:#f7f9fb">
-<h3 style="margin-top:0">Add program</h3>
+<h2 id="programsHeading">Loyalty programs</h2><div id="programList"></div>
+<div class="panel" style="margin-top:14px;padding:13px;background:#f7faf9"><label id="languageLabel">Language<select id="languageSelect"><option value="auto">Automatic</option><option value="en">English</option><option value="de">Deutsch</option></select></label></div>
+<div class="panel" style="margin-top:14px;padding:13px;background:#f7faf9">
+<h3 id="addProgramHeading" style="margin-top:0">Add program</h3>
 <form id="programForm">
-<label>Program name<input id="newProgram" placeholder="e.g. Flying Blue" required></label>
-<label>Unit name<input id="newUnit" value="miles" placeholder="miles, points, etc."></label>
-<div class="full"><button class="primary" type="submit">Add program</button></div>
+<label id="newProgramLabel">Program name<input id="newProgram" required></label>
+<label id="newUnitLabel">Unit name<input id="newUnit" value="miles"></label>
+<div class="full"><button class="primary" type="submit" id="addProgramBtn">Add program</button></div>
 </form>
 </div>
 </div></div>
@@ -111,282 +127,140 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <script>
 (function(){
 "use strict";
-
-var DATA_KEY="loyalty-ledger-v4";
+var DATA_KEY="loyalty-ledger-v5", V4_KEY="loyalty-ledger-v4";
 var LEGACY_KEYS=["mm-ledger-v3","mm-ledger-v2","mm-ledger-v1"];
-var $=function(id){return document.getElementById(id)};
-var fmt=function(n){return Number(n||0).toLocaleString("en-US")};
+var $=function(id){return document.getElementById(id)}, fmt=function(n){return Number(n||0).toLocaleString(currentLocale())};
 var uid=function(){return (window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Date.now())+"-"+Math.random()};
 var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
 
-function defaultState(){
- return {version:4,programs:[{id:"miles-more",name:"Miles & More",unit:"miles"}],transactions:[],activeProgramId:"miles-more"};
-}
-function normalizeTransaction(x){
- return {
-  id:x.id||uid(),
-  programId:x.programId||"miles-more",
-  date:x.date||"",
-  type:x.type||"adjustment",
-  miles:Number(x.miles||0),
-  owner:x.owner==="business"?"business":"personal",
-  airline:x.airline||"",
-  flight:x.flight||"",
-  route:x.route||"",
-  card:x.card||"",
-  description:x.description||""
- };
-}
-function migrateLegacy(){
- var existing=localStorage.getItem(DATA_KEY);
- if(existing){
-  try{
-   var parsed=JSON.parse(existing);
-   if(parsed&&Array.isArray(parsed.programs)&&Array.isArray(parsed.transactions)) return {state:parsed,notice:""};
-  }catch(e){}
- }
- var state=defaultState();
- var migrated=0;
- for(var i=0;i<LEGACY_KEYS.length;i++){
-  var raw=localStorage.getItem(LEGACY_KEYS[i]);
-  if(!raw) continue;
-  try{
-   var arr=JSON.parse(raw);
-   if(Array.isArray(arr)){
-    arr.forEach(function(x){
-     state.transactions.push(normalizeTransaction(x));
-     migrated++;
-    });
-    break;
-   }
-  }catch(e){}
- }
- if(migrated){
-  state._migrationSource="legacy";
-  state._migrationCount=migrated;
-  return {state:state,notice:"Migrated "+migrated+" existing transaction"+(migrated===1?"":"s")+" into Miles & More."};
- }
- return {state:state,notice:""};
-}
-var loaded=migrateLegacy();
-var state=loaded.state;
-var migrationNotice=loaded.notice;
+var I18N={
+en:{
+program:"Active loyalty program",manage:"Manage programs",net:"Net balance",company:"Company balance · tap for history",personal:"Personal balance · tap for history",
+add:"Add transaction",edit:"Edit transaction",positive:"Positive = earned · Negative = spent",type:"Type",date:"Date",amount:"Miles / points",ownership:"Ownership",Company:"Company",Personal:"Personal",
+flight:"Flight",hotel:"Hotel",card_company:"Company credit card",card_personal:"Personal credit card",other_earning:"Other earning",redemption:"Award / redemption",adjustment:"Adjustment",
+airline:"Airline",flightNo:"Flight number",route:"Route",hotelName:"Hotel / group",location:"Location / stay",card:"Card / account",description:"Description",
+addBtn:"Add transaction",save:"Save changes",cancel:"Cancel edit",recent:"Recent transactions",viewAll:"View all",hide:"Hide",history:"Transaction history",reconcile:"Reconcile with loyalty account",currentBalance:"Current account balance",check:"Check",
+reconcileHelp:"Compares the entered balance with the selected program's ledger. It does not connect to any loyalty program.",data:"Data",csv:"Export CSV",backup:"Backup data",restore:"Restore backup",clear:"Clear all transactions",
+close:"Close",programs:"Loyalty programs",addProgram:"Add program",programName:"Program name",unit:"Unit name",added:"Transaction added",updated:"Transaction updated",programAdded:"Program added",
+migrated:"Migrated {n} existing transaction{s} into Miles & More.",match:"✓ Matches your ledger.",difference:"Difference: {d}",noRecent:"No transactions recorded for {program}.",noCategory:"No transactions for this category.",
+running:"Running balance for this ownership category",negative:"⚠️ This ownership balance is negative. The ledger still reconciles mathematically, but the allocation may be worth reviewing.",
+deleteConfirm:"Delete this transaction?",clearConfirm:"Delete ALL transactions across ALL loyalty programs?",programDeleteConfirm:"Delete this loyalty program?",programHasTx:"This program has transactions. Delete those transactions before deleting the program.",invalidBackup:"Invalid backup file.",restored:"Backup restored.",
+defaultProgram:"Default program",language:"Language",automatic:"Automatic",english:"English",german:"Deutsch",flightPlaceholder:"e.g. Lufthansa",flightNoPlaceholder:"e.g. LH400",routePlaceholder:"e.g. FRA → JFK",hotelPlaceholder:"e.g. Marriott",locationPlaceholder:"e.g. Frankfurt",cardPlaceholder:"e.g. Company card",
+descPlaceholder:"Optional note",milesPlaceholder:"e.g. 3500",redemptionPlaceholder:"e.g. -50000",newProgramPlaceholder:"e.g. Flying Blue",unitPlaceholder:"miles, points, etc.",addCheck:"✓ {n} {unit} added",updateCheck:"✓ Transaction updated"
+},
+de:{
+program:"Aktives Treueprogramm",manage:"Programme verwalten",net:"Kontostand",company:"Firmenbestand · Verlauf anzeigen",personal:"Privatbestand · Verlauf anzeigen",
+add:"Transaktion hinzufügen",edit:"Transaktion bearbeiten",positive:"Positiv = gutgeschrieben · Negativ = eingelöst",type:"Art",date:"Datum",amount:"Meilen / Punkte",ownership:"Zuordnung",Company:"Firma",Personal:"Privat",
+flight:"Flug",hotel:"Hotel",card_company:"Firmenkreditkarte",card_personal:"Private Kreditkarte",other_earning:"Sonstige Gutschrift",redemption:"Prämieneinlösung",adjustment:"Korrektur",
+airline:"Fluggesellschaft",flightNo:"Flugnummer",route:"Strecke",hotelName:"Hotel / Gruppe",location:"Ort / Aufenthalt",card:"Karte / Konto",description:"Beschreibung",
+addBtn:"Transaktion hinzufügen",save:"Änderungen speichern",cancel:"Bearbeitung abbrechen",recent:"Letzte Transaktionen",viewAll:"Alle anzeigen",hide:"Ausblenden",history:"Transaktionsverlauf",reconcile:"Mit Treuekonto abgleichen",currentBalance:"Aktueller Kontostand",check:"Prüfen",
+reconcileHelp:"Vergleicht den eingegebenen Kontostand mit dem ausgewählten Programm. Es besteht keine Verbindung zum Treueprogramm.",data:"Daten",csv:"CSV exportieren",backup:"Daten sichern",restore:"Sicherung wiederherstellen",clear:"Alle Transaktionen löschen",
+close:"Schließen",programs:"Treueprogramme",addProgram:"Programm hinzufügen",programName:"Programmname",unit:"Einheit",added:"Transaktion hinzugefügt",updated:"Transaktion aktualisiert",programAdded:"Programm hinzugefügt",
+migrated:"{n} vorhandene Transaktion{s} wurden zu Miles & More übernommen.",match:"✓ Entspricht deinem Ledger.",difference:"Differenz: {d}",noRecent:"Keine Transaktionen für {program}.",noCategory:"Keine Transaktionen für diese Kategorie.",
+running:"Laufender Saldo für diese Zuordnung",negative:"⚠️ Dieser Zuordnungssaldo ist negativ. Das Ledger bleibt rechnerisch korrekt, aber die Zuordnung sollte geprüft werden.",
+deleteConfirm:"Diese Transaktion löschen?",clearConfirm:"ALLE Transaktionen in ALLEN Treueprogrammen löschen?",programDeleteConfirm:"Dieses Treueprogramm löschen?",programHasTx:"Dieses Programm enthält Transaktionen. Lösche diese zuerst.",invalidBackup:"Ungültige Sicherungsdatei.",restored:"Sicherung wiederhergestellt.",
+defaultProgram:"Standardprogramm",language:"Sprache",automatic:"Automatisch",english:"English",german:"Deutsch",flightPlaceholder:"z. B. Lufthansa",flightNoPlaceholder:"z. B. LH400",routePlaceholder:"z. B. FRA → JFK",hotelPlaceholder:"z. B. Marriott",locationPlaceholder:"z. B. Frankfurt",cardPlaceholder:"z. B. Firmenkarte",
+descPlaceholder:"Optionaler Hinweis",milesPlaceholder:"z. B. 3500",redemptionPlaceholder:"z. B. -50000",newProgramPlaceholder:"z. B. Flying Blue",unitPlaceholder:"Meilen, Punkte usw.",addCheck:"✓ {n} {unit} hinzugefügt",updateCheck:"✓ Transaktion aktualisiert"
+}};
+var lang="en";
+function currentLocale(){return lang==="de"?"de-DE":"en-US"}
+function tr(k,vars){var s=(I18N[lang]||I18N.en)[k]||I18N.en[k]||k;return (vars?Object.keys(vars).reduce(function(a,x){return a.replaceAll("{"+x+"}",vars[x])},s):s)}
+function detectLang(){var saved=localStorage.getItem("milesplit-language");if(saved==="en"||saved==="de")return saved;var nav=(navigator.languages&&navigator.languages[0]||navigator.language||"en").toLowerCase();return nav.indexOf("de")===0?"de":"en"}
 
-function save(){
- localStorage.setItem(DATA_KEY,JSON.stringify(state));
- render();
+function defaultState(){return {version:5,programs:[{id:"miles-more",name:"Miles & More",unit:"miles"}],transactions:[],activeProgramId:"miles-more"}}
+function normalize(t){
+ return {id:t.id||uid(),programId:t.programId||"miles-more",date:t.date||"",type:t.type==="flight"?"flight":(t.type||"adjustment"),miles:Number(t.miles||0),owner:t.owner==="business"?"business":"personal",airline:t.airline||"",flight:t.flight||"",route:t.route||"",hotel:t.hotel||"",location:t.location||"",card:t.card||"",description:t.description||""}
 }
-function activeProgram(){
- for(var i=0;i<state.programs.length;i++) if(state.programs[i].id===state.activeProgramId) return state.programs[i];
- return state.programs[0];
+function load(){
+ var raw=localStorage.getItem(DATA_KEY);
+ if(raw)try{var s=JSON.parse(raw);if(s&&Array.isArray(s.programs)&&Array.isArray(s.transactions))return {s:s,notice:""};}catch(e){}
+ var source=localStorage.getItem(V4_KEY), notice="", s=defaultState();
+ if(source)try{var old=JSON.parse(source);if(old&&Array.isArray(old.programs)&&Array.isArray(old.transactions)){s=old;s.version=5;s.transactions=s.transactions.map(normalize);return {s:s,notice:""}}}catch(e){}
+ for(var i=0;i<LEGACY_KEYS.length;i++){var r=localStorage.getItem(LEGACY_KEYS[i]);if(!r)continue;try{var a=JSON.parse(r);if(Array.isArray(a)){s.transactions=a.map(normalize);notice=tr("migrated",{n:s.transactions.length,s:s.transactions.length===1?"":"n"});break}}catch(e){}}
+ return {s:s,notice:notice}
 }
-function activeTransactions(){
- var id=activeProgram().id;
- return state.transactions.filter(function(t){return t.programId===id});
-}
-function ownerBalance(owner){
- return activeTransactions().filter(function(t){return t.owner===owner}).reduce(function(sum,t){return sum+Number(t.miles);},0);
-}
-function typeLabel(t){
- return {flight:"Flight","card_company":"Company card","card_personal":"Personal card",other_earning:"Other earning",redemption:"Award / redemption",adjustment:"Adjustment"}[t]||t;
-}
+var loaded=load(), state=loaded.s; lang=detectLang();
+
+function save(){localStorage.setItem(DATA_KEY,JSON.stringify(state));render()}
+function activeProgram(){return state.programs.find(function(p){return p.id===state.activeProgramId})||state.programs[0]}
+function activeTx(){var id=activeProgram().id;return state.transactions.filter(function(t){return t.programId===id})}
+function balance(owner){return activeTx().filter(function(t){return t.owner===owner}).reduce(function(s,t){return s+Number(t.miles)},0)}
+function typeLabel(t){return tr(t)}
 function details(t){
- if(t.type==="flight") return esc((t.airline+" "+t.flight).trim())+"<br>"+esc(t.route)+(t.description?"<br><span class='small'>"+esc(t.description)+"</span>":"");
- if(t.type==="card_company"||t.type==="card_personal") return esc(t.card||"Credit card")+(t.description?"<br><span class='small'>"+esc(t.description)+"</span>":"");
+ if(t.type==="flight")return esc((t.airline+" "+t.flight).trim())+(t.route?" · "+esc(t.route):"");
+ if(t.type==="hotel")return esc(t.hotel||tr("hotel"))+(t.location?" · "+esc(t.location):"");
+ if(t.type==="card_company"||t.type==="card_personal")return esc(t.card||tr("card"));
  return esc(t.description||"");
 }
 function renderPrograms(){
- var s=$("programSelect");
- s.innerHTML=state.programs.map(function(p){return "<option value='"+esc(p.id)+"'>"+esc(p.name)+"</option>"}).join("");
- s.value=state.activeProgramId;
- var p=activeProgram();
- $("totalLabel").textContent="Net "+p.unit+" in "+p.name;
- document.title=p.name+" · Loyalty Ledger";
+ $("programSelect").innerHTML=state.programs.map(function(p){return "<option value='"+esc(p.id)+"'>"+esc(p.name)+"</option>"}).join("");$("programSelect").value=state.activeProgramId;
 }
-function render(){
- renderPrograms();
- var tx=activeTransactions();
- var total=tx.reduce(function(s,t){return s+Number(t.miles)},0);
- var biz=ownerBalance("business"), per=ownerBalance("personal");
- $("total").textContent=fmt(total);
- $("business").textContent=fmt(biz);
- $("personal").textContent=fmt(per);
- $("business").className="value "+(biz<0?"negative":"");
- $("personal").className="value "+(per<0?"negative":"");
- $("count").textContent=tx.length+" transaction"+(tx.length===1?"":"s");
- if(!tx.length){
-  $("tableWrap").innerHTML="<div class='empty'>No transactions recorded for "+esc(activeProgram().name)+".</div>";
-  return;
- }
- var a=tx.slice().sort(function(x,y){return y.date.localeCompare(x.date)||String(y.id).localeCompare(String(x.id))});
- var rows=a.map(function(t){
-  return "<tr><td>"+esc(t.date)+"</td><td><span class='pill "+(t.miles<0?"spend":"earn")+"'>"+typeLabel(t.type)+"</span></td><td>"+details(t)+"</td><td>"+(t.miles>0?"+":"")+fmt(t.miles)+"</td><td><span class='pill "+(t.owner==="business"?"b":"p")+"'>"+(t.owner==="business"?"Company":"Personal")+"</span></td><td><button class='secondary' type='button' onclick=\"editTx('"+t.id+"')\">Edit</button> <button class='danger' type='button' onclick=\"removeTx('"+t.id+"')\">Delete</button></td></tr>";
- }).join("");
- $("tableWrap").innerHTML="<table><thead><tr><th>Date</th><th>Type</th><th>Details</th><th>"+esc(activeProgram().unit)+"</th><th>Ownership</th><th>Actions</th></tr></thead><tbody>"+rows+"</tbody></table>";
+function applyI18n(){
+ document.documentElement.lang=lang;
+ $("programLabel").textContent=tr("program");$("managePrograms").textContent=tr("manage");$("companyLabel").textContent=tr("company");$("personalLabel").textContent=tr("personal");
+ $("addHeading").textContent=$( "editId").value?tr("edit"):tr("add");$("signHint").textContent=tr("positive");$("typeLabel").childNodes[0].textContent=tr("type")+" ";$("dateLabel").childNodes[0].textContent=tr("date")+" ";$("milesLabel").childNodes[0].textContent=tr("amount")+" ";$("ownerLabel").childNodes[0].textContent=tr("ownership")+" ";
+ $("owner").innerHTML="<option value='business'>"+tr("Company")+"</option><option value='personal'>"+tr("Personal")+"</option>";
+ $("airlineLabel").childNodes[0].textContent=tr("airline")+" ";$("flightLabel").childNodes[0].textContent=tr("flightNo")+" ";$("routeLabel").childNodes[0].textContent=tr("route")+" ";$("hotelLabel").childNodes[0].textContent=tr("hotelName")+" ";$("locationLabel").childNodes[0].textContent=tr("location")+" ";$("cardLabel").childNodes[0].textContent=tr("card")+" ";$("descriptionLabel").childNodes[0].textContent=tr("description")+" ";
+ $("recentHeading").textContent=tr("recent");$("viewAllBtn").textContent=tr("viewAll");$("historyHeading").textContent=tr("history");$("hideHistoryBtn").textContent=tr("hide");
+ $("reconcileHeading").textContent=tr("reconcile");$("accountBalanceLabel").childNodes[0].textContent=tr("currentBalance")+" ";$("reconcileBtn").textContent=tr("check");$("reconcileHelp").textContent=tr("reconcileHelp");
+ $("backupHeading").textContent=tr("data");$("exportBtn").textContent=tr("csv");$("backupBtn").textContent=tr("backup");$("clearBtn").textContent=tr("clear");$("restore").parentElement.childNodes[0].textContent=tr("restore");
+ $("closeHistoryBtn").textContent=tr("close");$("languageLabel").childNodes[0].textContent=tr("language")+" ";$("programsHeading").textContent=tr("programs");$("addProgramHeading").textContent=tr("addProgram");$("newProgramLabel").childNodes[0].textContent=tr("programName")+" ";$("newUnitLabel").childNodes[0].textContent=tr("unit")+" ";$("addProgramBtn").textContent=tr("addProgram");
+ $("airline").placeholder=tr("flightPlaceholder");$("flight").placeholder=tr("flightNoPlaceholder");$("route").placeholder=tr("routePlaceholder");$("hotel").placeholder=tr("hotelPlaceholder");$("location").placeholder=tr("locationPlaceholder");$("card").placeholder=tr("cardPlaceholder");$("description").placeholder=tr("descPlaceholder");$("miles").placeholder=$("type").value==="redemption"?tr("redemptionPlaceholder"):tr("milesPlaceholder");$("newProgram").placeholder=tr("newProgramPlaceholder");$("newUnit").placeholder=tr("unitPlaceholder");
+ renderTypeOptions();renderPrograms();
 }
-function setForm(t){
- $("editId").value=t?t.id:"";
- $("type").value=t?t.type:"flight";
- $("date").value=t?t.date:"";
- $("miles").value=t?(t.miles):"";
- $("owner").value=t?t.owner:"business";
- $("airline").value=t?t.airline:"";
- $("flight").value=t?t.flight:"";
- $("route").value=t?t.route:"";
- $("card").value=t?t.card:"";
- $("description").value=t?t.description:"";
- updateFields();
- $("submitBtn").textContent=t?"Save changes":"Add transaction";
- $("cancelEdit").style.display=t?"inline-block":"none";
- if(t) window.scrollTo({top:0,behavior:"smooth"});
+function renderTypeOptions(){
+ var val=$("type").value||"flight";var opts=["flight","hotel","card_company","card_personal","other_earning","redemption","adjustment"];
+ $("type").innerHTML=opts.map(function(x){return "<option value='"+x+"'>"+tr(x)+"</option>"}).join("");$("type").value=opts.indexOf(val)>=0?val:"flight";updateFields();
 }
 function updateFields(){
- var t=$("type").value;
- $("flightFields").style.display=t==="flight"?"contents":"none";
- $("cardFields").style.display=(t==="card_company"||t==="card_personal")?"contents":"none";
- if(t==="card_company") $("owner").value="business";
- if(t==="card_personal") $("owner").value="personal";
- $("miles").placeholder=t==="redemption"?"e.g. -50000":"e.g. 3500";
+ var t=$("type").value;$("flightFields").style.display=t==="flight"?"contents":"none";$("hotelFields").style.display=t==="hotel"?"contents":"none";$("cardFields").style.display=(t==="card_company"||t==="card_personal")?"contents":"none";
+ if(t==="card_company")$("owner").value="business";if(t==="card_personal")$("owner").value="personal";$("miles").placeholder=t==="redemption"?tr("redemptionPlaceholder"):tr("milesPlaceholder");
 }
-window.editTx=function(id){
- var t=state.transactions.find(function(x){return x.id===id});
- if(t) setForm(t);
-};
-window.removeTx=function(id){
- if(confirm("Delete this transaction?")){
-  state.transactions=state.transactions.filter(function(t){return t.id!==id});
-  save();
- }
-};
-$("type").addEventListener("change",updateFields);
-$("cancelEdit").addEventListener("click",function(){setForm(null)});
+function render(){
+ renderPrograms();var p=activeProgram(),tx=activeTx(),total=tx.reduce(function(s,t){return s+Number(t.miles)},0),biz=balance("business"),per=balance("personal");
+ $("totalLabel").textContent=tr("net")+" · "+p.name;$("total").textContent=fmt(total);$("business").textContent=fmt(biz);$("personal").textContent=fmt(per);$("business").className="value "+(biz<0?"negative":"");$("personal").className="value "+(per<0?"negative");
+ var sorted=tx.slice().sort(function(a,b){return b.date.localeCompare(a.date)||String(b.id).localeCompare(String(a.id))});
+ if(!sorted.length){$("recentWrap").innerHTML="<div class='empty'>"+tr("noRecent",{program:esc(p.name)})+"</div>";return}
+ $("recentWrap").innerHTML="<ul class='recent-list'>"+sorted.slice(0,4).map(function(t){return "<li class='recent-item'><div class='recent-date'>"+esc(t.date)+"</div><div class='recent-main'><div class='recent-title'>"+esc(typeLabel(t))+"</div><div class='recent-sub'>"+details(t)+"</div></div><div class='amount "+(t.miles<0?"neg":"pos")+"'>"+(t.miles>0?"+":"")+fmt(t.miles)+"<div class='owner "+(t.owner==="business"?"company":"personal")+"'>"+tr(t.owner==="business"?"Company":"Personal")+"</div></div></li>"}).join("")+"</ul>";
+}
+function setForm(t){
+ $("editId").value=t?t.id:"";$("type").value=t?t.type:"flight";$("date").value=t?t.date:"";$("miles").value=t?t.miles:"";$("owner").value=t?t.owner:"business";$("airline").value=t?t.airline:"";$("flight").value=t?t.flight:"";$("route").value=t?t.route:"";$("hotel").value=t?t.hotel:"";$("location").value=t?t.location:"";$("card").value=t?t.card:"";$("description").value=t?t.description:"";updateFields();$("submitBtn").textContent=t?tr("save"):tr("addBtn");$("cancelEdit").textContent=tr("cancel");$("cancelEdit").style.display=t?"inline-block":"none";$("addHeading").textContent=t?tr("edit"):tr("add");
+}
+window.editTx=function(id){var t=state.transactions.find(function(x){return x.id===id});if(t){setForm(t);window.scrollTo({top:0,behavior:"smooth"})}}
+window.removeTx=function(id){if(confirm(tr("deleteConfirm"))){state.transactions=state.transactions.filter(function(t){return t.id!==id});save()}};
+function toast(text){$("toastText").textContent=text;$("toast").classList.add("show");clearTimeout(window._toast);window._toast=setTimeout(function(){$("toast").classList.remove("show")},1500)}
 $("txForm").addEventListener("submit",function(e){
- e.preventDefault();
- var id=$("editId").value;
- var type=$("type").value;
- var miles=Number($("miles").value);
- if(type==="redemption"&&miles>0) miles=-miles;
- var obj={
-  id:id||uid(),
-  programId:activeProgram().id,
-  date:$("date").value,
-  type:type,
-  miles:miles,
-  owner:$("owner").value,
-  airline:$("airline").value.trim(),
-  flight:$("flight").value.trim(),
-  route:$("route").value.trim(),
-  card:$("card").value.trim(),
-  description:$("description").value.trim()
- };
- if(!obj.date){alert("Please enter a date.");return}
- if(!Number.isFinite(miles)){alert("Please enter a valid mileage amount.");return}
- if(id){
-  var idx=state.transactions.findIndex(function(x){return x.id===id});
-  if(idx>=0) state.transactions[idx]=obj;
- }else{
-  state.transactions.push(obj);
- }
- setForm(null);
- save();
+ e.preventDefault();var id=$("editId").value,type=$("type").value,miles=Number($("miles").value);if(type==="redemption"&&miles>0)miles=-miles;
+ if(!$("date").value||!Number.isFinite(miles)){alert(lang==="de"?"Bitte Datum und gültigen Betrag eingeben.":"Please enter a date and valid amount.");return}
+ var obj={id:id||uid(),programId:activeProgram().id,date:$("date").value,type:type,miles:miles,owner:$("owner").value,airline:$("airline").value.trim(),flight:$("flight").value.trim(),route:$("route").value.trim(),hotel:$("hotel").value.trim(),location:$("location").value.trim(),card:$("card").value.trim(),description:$("description").value.trim()};
+ if(id){var i=state.transactions.findIndex(function(t){return t.id===id});if(i>=0)state.transactions[i]=obj}else state.transactions.push(obj);
+ setForm(null);save();toast(id?tr("updateCheck"):tr("addCheck",{n:fmt(Math.abs(miles)),unit:activeProgram().unit}));
 });
-$("programSelect").addEventListener("change",function(){
- state.activeProgramId=$("programSelect").value;
- save();
- setForm(null);
-});
-$("reconcileBtn").addEventListener("click",function(){
- var entered=Number($("balance").value);
- if(!Number.isFinite(entered)){alert("Enter the current account balance.");return}
- var total=activeTransactions().reduce(function(s,t){return s+Number(t.miles)},0);
- var d=entered-total;
- $("reconcileResult").textContent=entered===total?"✓ Matches your ledger.":"Difference: "+(d>0?"+":"")+fmt(d)+" "+activeProgram().unit;
-});
-window.showHistory=function(owner){
- var a=activeTransactions().filter(function(t){return t.owner===owner}).sort(function(x,y){return x.date.localeCompare(y.date)||String(x.id).localeCompare(String(y.id))});
- var b=0;
- $("historyTitle").textContent=(owner==="business"?"Company":"Personal")+" balance history · "+activeProgram().name;
- $("historyBalance").textContent=fmt(ownerBalance(owner));
- var html="<table><thead><tr><th>Date</th><th>Transaction</th><th>Change</th><th>Balance</th></tr></thead><tbody>";
- a.forEach(function(t){
-  b+=Number(t.miles);
-  html+="<tr><td>"+esc(t.date)+"</td><td>"+typeLabel(t.type)+"<br><span class='small'>"+details(t).replace(/<br>/g," · ")+"</span></td><td>"+(t.miles>0?"+":"")+fmt(t.miles)+"</td><td class='"+(b<0?"negative":"")+"'>"+fmt(b)+"</td></tr>";
- });
- html+="</tbody></table>";
- $("historyTable").innerHTML=a.length?html:"<div class='empty'>No transactions for this category.</div>";
- $("historyWarning").innerHTML=ownerBalance(owner)<0?"<div class='alert'>⚠️ This ownership balance is negative. The ledger still reconciles mathematically, but the allocation may be worth reviewing.</div>":"";
- $("historyModal").classList.add("open");
-};
+$("cancelEdit").addEventListener("click",function(){setForm(null);applyI18n()});$("type").addEventListener("change",updateFields);
+$("programSelect").addEventListener("change",function(){state.activeProgramId=this.value;save();setForm(null);$("allHistoryPanel").style.display="none"});
+$("viewAllBtn").addEventListener("click",function(){$("allHistoryPanel").style.display="block";renderHistory();$("allHistoryPanel").scrollIntoView({behavior:"smooth",block:"start"})});
+$("hideHistoryBtn").addEventListener("click",function(){$("allHistoryPanel").style.display="none"});
+function renderHistory(){
+ var tx=activeTx().slice().sort(function(a,b){return b.date.localeCompare(a.date)||String(b.id).localeCompare(String(a.id))});if(!tx.length){$("historyWrap").innerHTML="<div class='empty'>"+tr("noRecent",{program:esc(activeProgram().name)})+"</div>";return}
+ var years={};tx.forEach(function(t){var y=t.date? t.date.slice(0,4):"—";(years[y]||(years[y]=[])).push(t)});
+ var ys=Object.keys(years).sort().reverse();$("historyWrap").innerHTML=ys.map(function(y,i){return "<details class='year' "+(i===0?"open":"")+"><summary>"+esc(y)+" · "+years[y].length+"</summary>"+tableFor(years[y])+"</details>"}).join("");
+}
+function tableFor(a){return "<table><thead><tr><th>"+tr("date")+"</th><th>"+tr("type")+"</th><th>"+tr("description")+"</th><th>"+esc(activeProgram().unit)+"</th><th>"+tr("ownership")+"</th><th></th></tr></thead><tbody>"+a.map(function(t){return "<tr><td>"+esc(t.date)+"</td><td><span class='pill "+(t.miles<0?"spend":"earn")+"'>"+esc(typeLabel(t))+"</span></td><td>"+details(t)+"</td><td>"+(t.miles>0?"+":"")+fmt(t.miles)+"</td><td><span class='pill "+(t.owner==="business"?"b":"p")+"'>"+tr(t.owner==="business"?"Company":"Personal")+"</span></td><td><button class='secondary' type='button' onclick=\"editTx('"+t.id+"')\">"+tr("edit")+"</button> <button class='danger' type='button' onclick=\"removeTx('"+t.id+"')\">×</button></td></tr>"}).join("")+"</tbody></table>"}
+window.showHistory=function(owner){var a=activeTx().filter(function(t){return t.owner===owner}).sort(function(x,y){return x.date.localeCompare(y.date)||String(x.id).localeCompare(String(y.id))}),b=0;$("historyTitle").textContent=tr(owner==="business"?"Company":"Personal")+" · "+activeProgram().name;$("historySub").textContent=tr("running");$("historyBalance").textContent=fmt(balance(owner));$("historyTable").innerHTML=a.length?tableHistory(a):"<div class='empty'>"+tr("noCategory")+"</div>";$("historyWarning").innerHTML=balance(owner)<0?"<div class='alert'>"+tr("negative")+"</div>":"";$("historyModal").classList.add("open")};
+function tableHistory(a){var b=0,html="<table><thead><tr><th>"+tr("date")+"</th><th>"+tr("type")+"</th><th>"+tr("amount")+"</th><th>"+tr("net")+"</th></tr></thead><tbody>";a.forEach(function(t){b+=Number(t.miles);html+="<tr><td>"+esc(t.date)+"</td><td>"+esc(typeLabel(t))+"<br><span class='small'>"+details(t)+"</span></td><td>"+(t.miles>0?"+":"")+fmt(t.miles)+"</td><td>"+fmt(b)+"</td></tr>"});return html+"</tbody></table>"}
 window.closeHistory=function(){$("historyModal").classList.remove("open")};
-
-$("managePrograms").addEventListener("click",function(){renderProgramList();$("programModal").classList.add("open")});
-window.closePrograms=function(){$("programModal").classList.remove("open")};
-function renderProgramList(){
- $("programList").innerHTML=state.programs.map(function(p){
-  var n=state.transactions.filter(function(t){return t.programId===p.id}).length;
-  var del=p.id==="miles-more"?"<span class='small'>Default program</span>":"<button class='danger' type='button' onclick=\"deleteProgram('"+p.id+"')\">Delete</button>";
-  return "<div class='panel' style='padding:12px;margin-bottom:8px'><strong>"+esc(p.name)+"</strong><div class='small'>"+esc(p.unit)+" · "+n+" transaction"+(n===1?"":"s")+"</div><div class='actions' style='margin-top:8px'>"+del+"</div></div>";
- }).join("");
-}
-window.deleteProgram=function(id){
- if(state.transactions.some(function(t){return t.programId===id})){alert("This program has transactions. Delete those transactions before deleting the program.");return}
- if(confirm("Delete this loyalty program?")){
-  state.programs=state.programs.filter(function(p){return p.id!==id});
-  if(state.activeProgramId===id) state.activeProgramId=state.programs[0].id;
-  save();renderProgramList();
- }
-};
-$("programForm").addEventListener("submit",function(e){
- e.preventDefault();
- var name=$("newProgram").value.trim();
- var unit=$("newUnit").value.trim()||"miles";
- if(!name){alert("Enter a program name.");return}
- var p={id:uid(),name:name,unit:unit};
- state.programs.push(p);
- state.activeProgramId=p.id;
- $("newProgram").value="";
- $("newUnit").value="miles";
- save();renderProgramList();closePrograms();
-});
-function download(name,data,type){
- var a=document.createElement("a");
- a.href=URL.createObjectURL(new Blob([data],{type:type}));
- a.download=name;a.click();
- setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
-}
-$("exportBtn").addEventListener("click",function(){
- var p=activeProgram();
- var rows=[["Program","Unit","Date","Type","Airline","Flight","Route","Card","Miles","Ownership","Description"]];
- activeTransactions().forEach(function(t){rows.push([p.name,p.unit,t.date,typeLabel(t.type),t.airline,t.flight,t.route,t.card,t.miles,t.owner==="business"?"Company":"Personal",t.description])});
- var csv=rows.map(function(r){return r.map(function(x){return '"'+String(x==null?"":x).replace(/"/g,'""')+'"'}).join(",")}).join("\n");
- download("loyalty-ledger-"+p.name.replace(/[^a-z0-9]+/gi,"-")+".csv",csv,"text/csv");
-});
-$("backupBtn").addEventListener("click",function(){download("loyalty-ledger-backup.json",JSON.stringify(state,null,2),"application/json")});
-$("restore").addEventListener("change",function(e){
- var f=e.target.files[0];if(!f)return;
- var r=new FileReader();
- r.onload=function(){
-  try{
-   var x=JSON.parse(r.result);
-   if(!x||!Array.isArray(x.programs)||!Array.isArray(x.transactions)) throw new Error();
-   state=x;save();alert("Backup restored.");
-  }catch(err){alert("Invalid backup file.")}
- };
- r.readAsText(f);
-});
-$("clearBtn").addEventListener("click",function(){
- if(confirm("Delete ALL transactions across ALL loyalty programs?")){
-  state.transactions=[];save();
- }
-});
-
-if(migrationNotice){
- $("migrationNotice").innerHTML="<div class='notice'>✓ "+esc(migrationNotice)+"</div>";
- try{localStorage.setItem(DATA_KEY,JSON.stringify(state))}catch(e){}
-}
-render();
-updateFields();
-
+$("managePrograms").addEventListener("click",function(){renderProgramList();$("programModal").classList.add("open")});window.closePrograms=function(){$("programModal").classList.remove("open")};
+function renderProgramList(){var lm=localStorage.getItem("milesplit-language")||"auto";if($("languageSelect"))$("languageSelect").value=lm;$("programList").innerHTML=state.programs.map(function(p){var n=state.transactions.filter(function(t){return t.programId===p.id}).length;return "<div class='program-row'><div><strong>"+esc(p.name)+"</strong><div class='small'>"+esc(p.unit)+" · "+n+"</div></div>"+(p.id==="miles-more"?"<span class='small'>"+tr("defaultProgram")+"</span>":"<button class='danger' type='button' onclick=\"deleteProgram('"+p.id+"')\">×</button>")+"</div>"}).join("")}
+window.deleteProgram=function(id){if(state.transactions.some(function(t){return t.programId===id})){alert(tr("programHasTx"));return}if(confirm(tr("programDeleteConfirm"))){state.programs=state.programs.filter(function(p){return p.id!==id});if(state.activeProgramId===id)state.activeProgramId=state.programs[0].id;save();renderProgramList()}};
+$("languageSelect").addEventListener("change",function(){localStorage.setItem("milesplit-language",this.value);lang=this.value==="auto"?detectLang():this.value;applyI18n();render();renderProgramList();});
+$("programForm").addEventListener("submit",function(e){e.preventDefault();var name=$("newProgram").value.trim(),unit=$("newUnit").value.trim()||"miles";if(!name)return;state.programs.push({id:uid(),name:name,unit:unit});state.activeProgramId=state.programs[state.programs.length-1].id;$("newProgram").value="";$("newUnit").value="miles";save();renderProgramList();closePrograms();toast("✓ "+tr("programAdded"))});
+function download(name,data,type){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:type}));a.download=name;a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},1000)}
+$("exportBtn").addEventListener("click",function(){var p=activeProgram(),rows=[["Program","Unit","Date","Type","Airline","Flight","Route","Hotel","Location","Card","Miles","Ownership","Description"]];activeTx().forEach(function(t){rows.push([p.name,p.unit,t.date,typeLabel(t),t.airline,t.flight,t.route,t.hotel,t.location,t.card,t.miles,t.owner==="business"?"Company":"Personal",t.description])});download("milesplit-"+p.name.replace(/[^a-z0-9]+/gi,"-")+".csv",rows.map(function(r){return r.map(function(x){return '"'+String(x==null?"":x).replace(/"/g,'""')+'"'}).join(",")}).join("\n"),"text/csv")});
+$("backupBtn").addEventListener("click",function(){download("milesplit-backup.json",JSON.stringify(state,null,2),"application/json")});
+$("restore").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var x=JSON.parse(r.result);if(!x||!Array.isArray(x.programs)||!Array.isArray(x.transactions))throw 0;state=x;state.transactions=state.transactions.map(normalize);save();alert(tr("restored"))}catch(err){alert(tr("invalidBackup"))}};r.readAsText(f)});
+$("clearBtn").addEventListener("click",function(){if(confirm(tr("clearConfirm"))){state.transactions=[];save()}});
+function boot(){applyI18n();if(loaded.notice){$("migrationNotice").innerHTML="<div class='notice'>✓ "+esc(loaded.notice)+"</div>";localStorage.setItem(DATA_KEY,JSON.stringify(state))}render();setForm(null)}
+boot();
 })();
 </script>
 </body>
