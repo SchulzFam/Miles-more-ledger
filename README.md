@@ -1,17 +1,21 @@
-# MileSplit v0.5 — fixed build
+# MileSplit
 
-This build fixes the JavaScript syntax error that prevented buttons, saving, migration, and history from working.
+MileSplit is a small static web app for tracking loyalty-program balances and separating Company and Personal ownership within the same account.
 
-It also aligns the interface more closely with the approved Deep Teal MileSplit concept:
-- actual provisional split-ticket icon from the approved icon concept
-- compact branded header
-- Company / Personal / Total balance order
-- Add transaction / View history quick actions
-- four recent transactions
-- collapsible year history
-- English/German localization
-- v4 migration
+## v5
+- Compact MileSplit header with split-ticket icon
+- Loyalty-program selector in the header
+- Add/manage programs from the selector or Settings
+- English/German with automatic phone/browser language detection
+- Company, Personal and Total balances
+- Recent 4 transactions on the dashboard
+- Full transaction history in a modal, grouped by year
+- Company/Personal balance history in a modal
+- Flight, Hotel, credit card, other earning, redemption and adjustment transactions
+- Edit/delete transactions
+- iPhone-friendly 16px form controls to avoid focus zoom
+- CSV export and JSON backup/restore
+- v4/legacy localStorage migration
 
-Replace `index.html`, `manifest.json`, `README.md`, and add the `assets/` folder to the GitHub Pages repository.
-
-Do not clear local storage on the iPhone before testing; v5 migrates the existing v4 data.
+## GitHub Pages
+Upload the files to the repository root and enable GitHub Pages from the branch/folder you use for the site.

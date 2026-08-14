@@ -1,16 +1,11 @@
 {
-  "name": "MileSplit",
-  "short_name": "MileSplit",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#f2f7f6",
-  "theme_color": "#0d3d3d",
-  "icons": [
-    {
-      "src": "assets/milesplit-icon.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+  "name":"MileSplit",
+  "short_name":"MileSplit",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#f4f8f7",
+  "theme_color":"#0d3d3d",
+  "icons":[
+    {"src":"assets/milesplit-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
   ]
 }
