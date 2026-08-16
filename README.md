@@ -1,11 +1,15 @@
-# MileSplit v5.2 visual patch
+# MileSplit v5.3
 
-This build keeps the working v5.2 functionality and corrects the remaining visual icon issues:
+MileSplit is a local-first loyalty ledger for tracking multiple loyalty programs, separate company/personal ownership, earnings, redemptions and balances.
 
-- cleaner horizontal boarding-pass MileSplit icon with a 70/30 split
-- proper 2D settings gear
-- proper SVG chevron in the loyalty-program selector
-- consistent line icons for flight, hotel, credit card, other earning, redemption and adjustment
-- no emoji/symbol glyphs for transaction icons
+This build keeps the v5.2 data and functionality while applying the approved visual assets:
+- Approved MileSplit airline-ticket icon used as the app/header/home-screen icon.
+- Approved flat 2D settings icon.
+- Approved credit-card, redemption/award, hotel/stay (bed), and flight icons.
+- Hotel uses the bed/stay icon; there is no separate bed/stay transaction type.
 
-Files: `index.html`, `manifest.json`, `icon.svg`, `icon.png`.
+## Deploy
+
+Upload the contents of this folder to the GitHub Pages site root, replacing the existing files.
+
+Do not clear existing site data when upgrading. The app stores data in browser localStorage and includes migration/backup safeguards.
