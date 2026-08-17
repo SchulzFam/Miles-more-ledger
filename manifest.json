@@ -1,10 +1,10 @@
 {
   "name": "MileSplit",
   "short_name": "MileSplit",
-  "start_url": "./",
+  "start_url": ".",
   "display": "standalone",
-  "background_color": "#f5f9f8",
-  "theme_color": "#0d4747",
+  "background_color": "#F5F9F8",
+  "theme_color": "#0D3D3D",
   "icons": [
     {
       "src": "icon.png",
