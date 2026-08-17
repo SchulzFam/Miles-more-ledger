@@ -163,7 +163,41 @@ function hydrateHome(){
    try{state=load();renderPrograms();render();}catch(e2){console.error('MileSplit home recovery error',e2)}
  }
 }
-function boot(){try{if(!state||!Array.isArray(state.programs)){state=load()}lang=resolveLanguage();applyI18n();hydrateHome();setForm(null);requestAnimationFrame(hydrateHome);setTimeout(hydrateHome,120)}catch(e){console.error('MileSplit boot error',e);try{state=load();lang=resolveLanguage();applyI18n();hydrateHome();setForm(null)}catch(e2){console.error('MileSplit recovery error',e2)}}}
+function boot(){
+  try{
+    // Phase 1: establish the data model and populate the home screen BEFORE i18n.
+    // Automatic language detection must never be able to prevent data rendering.
+    state=load();
+    if(!state||!Array.isArray(state.programs)||!state.programs.length) state=defaultState();
+    if(!state.activeProgramId || !state.programs.some(p=>p.id===state.activeProgramId&&!p.archived)){
+      const first=state.programs.find(p=>!p.archived)||state.programs[0];
+      if(first) state.activeProgramId=first.id;
+    }
+    renderPrograms();
+    render();
+
+    // Phase 2: language is presentation only. Apply it after data is visible.
+    lang=resolveLanguage();
+    try{applyI18n()}catch(e){console.warn('MileSplit language render warning',e)}
+
+    // Phase 3: one final presentation refresh, never a data reload.
+    renderPrograms();
+    render();
+    setForm(null);
+  }catch(e){
+    console.error('MileSplit boot error',e);
+    try{
+      state=load()||defaultState();
+      lang=resolveLanguage();
+      renderPrograms();
+      render();
+      try{applyI18n()}catch(_){ }
+      renderPrograms();
+      render();
+      setForm(null);
+    }catch(e2){console.error('MileSplit recovery error',e2)}
+  }
+}
 window.addEventListener('pageshow',()=>{if(document.visibilityState!=='hidden')hydrateHome()});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')hydrateHome()});
 window.addEventListener('focus',()=>{if(!$('programSelect').options.length||!$('recentWrap').children.length)hydrateHome()});
