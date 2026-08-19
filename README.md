@@ -1,7 +1,5 @@
-# MileSplit v5.10
+# MileSplit v5.11
 
-English is the default language. German is the only alternative language. Automatic phone-language detection has been removed.
+Home Screen persistence fix: startup now discovers and merges the persisted ledger from all MileSplit storage keys before rendering the program selector and balances. Rendering never replaces missing program data with the default program. English remains the default and German is explicit.
 
-The Home Screen uses a single deterministic startup path: stored data and the active loyalty program are established before presentation language is applied.
-
-Release marker: MILESPLIT_RELEASE: 5.10.
+MILESPLIT_RELEASE: 5.11
