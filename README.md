@@ -1,5 +1,5 @@
-# MileSplit v5.8
+# MileSplit v5.9
 
-Clean v5.8 release.
+English is the default language. German is the only alternative. Automatic phone-language detection has been removed.
 
-Release marker: `MILESPLIT_RELEASE: 5.8`.
+Release marker: MILESPLIT_RELEASE: 5.9.
