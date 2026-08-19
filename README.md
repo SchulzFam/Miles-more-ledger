@@ -1,5 +1,7 @@
-# MileSplit v5.9
+# MileSplit v5.10
 
-English is the default language. German is the only alternative. Automatic phone-language detection has been removed.
+English is the default language. German is the only alternative language. Automatic phone-language detection has been removed.
 
-Release marker: MILESPLIT_RELEASE: 5.9.
+The Home Screen uses a single deterministic startup path: stored data and the active loyalty program are established before presentation language is applied.
+
+Release marker: MILESPLIT_RELEASE: 5.10.
