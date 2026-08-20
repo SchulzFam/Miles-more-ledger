@@ -1,4 +1,4 @@
-<!-- MILESPLIT_RELEASE: 5.11 -->
+<!-- MILESPLIT_RELEASE: 5.12 -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -36,12 +36,12 @@
 
 <div class="modal" id="historyModal"><div class="modalbox"><div class="modal-head"><div><h2 id="historyTitle">Transaction history</h2><div class="hint" id="historySub"></div></div><button class="close-btn" id="closeHistoryBtn" type="button">Close</button></div><div class="history-summary"><div class="hint" id="historyFilter"></div><div class="balance" id="historyBalance">0</div></div><div id="historyWarning"></div><div id="historyTable"></div></div></div>
 <div class="modal" id="programModal"><div class="modalbox"><div class="modal-head"><h2 id="programsHeading">Loyalty programs</h2><button class="close-btn" id="closeProgramsBtn" type="button">Close</button></div><div id="programList"></div><div class="panel" style="margin-top:14px;background:#f7faf9"><h2 id="addProgramHeading">Add program</h2><form id="programForm" class="form-grid"><label id="newProgramLabel">Program name<input id="newProgram" required></label><label id="newUnitLabel">Unit type<select id="newUnit"><option value="miles">Miles</option><option value="points">Points</option></select></label><div class="full"><button class="primary" type="submit" id="addProgramBtn">Add program</button></div></form></div></div></div>
-<div class="modal" id="languageModal"><div class="modalbox" style="max-width:520px"><div class="modal-head"><h2 id="languageHeading">Language</h2><button class="close-btn" id="closeLanguageBtn" type="button">Close</button></div><label id="languageLabel">Language<select id="languageSelect"><option value="en">English</option><option value="de">Deutsch</option></select></label></div></div>
+<div class="modal" id="languageModal"><div class="modalbox" style="max-width:520px"><div class="modal-head"><h2 id="languageHeading">Language</h2><button class="close-btn" id="closeLanguageBtn" type="button">Close</button></div><label id="languageLabel">Language</label></div></div>
 <div class="modal" id="dataModal"><div class="modalbox" style="max-width:620px"><div class="modal-head"><h2 id="dataHeading">Data & backup</h2><button class="close-btn" id="closeDataBtn" type="button">Close</button></div><div class="form-actions"><button class="secondary" id="exportBtn2" type="button">Export CSV</button><button class="secondary" id="backupBtn2" type="button">Backup data</button><label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer">Restore backup<input id="restore2" type="file" accept=".json" style="display:none"></label></div></div></div>
 
 <script>
-/* MILESPLIT_RELEASE: 5.11 */
-const MILESPLIT_APP_VERSION="5.10";
+/* MILESPLIT_RELEASE: 5.12 */
+const MILESPLIT_APP_VERSION = "5.12";
 
 (function(){'use strict';
 const DATA_KEY='loyalty-ledger-v5';
@@ -159,7 +159,7 @@ function restoreFile(file){const r=new FileReader();r.onload=()=>{try{const x=JS
 $('exportBtn').addEventListener('click',exportCSV);$('exportBtn2').addEventListener('click',exportCSV);$('backupBtn').addEventListener('click',backup);$('backupBtn2').addEventListener('click',backup);$('restore').addEventListener('change',e=>{if(e.target.files[0])restoreFile(e.target.files[0]);e.target.value=''});$('restore2').addEventListener('change',e=>{if(e.target.files[0])restoreFile(e.target.files[0]);e.target.value=''});$('clearBtn').addEventListener('click',()=>{if(confirm(tr('confirmClear'))){state.transactions=[];save()}});$('reconcileBtn').addEventListener('click',()=>{const v=Number($('balance').value),d=v-activeTx().reduce((s,t)=>s+Number(t.miles),0);$('reconcileResult').textContent=Math.abs(d)<0.0001?tr('match'):tr('difference',{d:fmt(d)})});
 function boot(){
  try{
-   // v5.11: load persisted ledger first. Presentation language is independent.
+   // v5.12: load persisted ledger first. Presentation language is independent.
    if(!state||!Array.isArray(state.programs)||!Array.isArray(state.transactions))state=defaultState();
    const first=state.programs.find(p=>!p.archived)||state.programs[0];
    if(first)state.activeProgramId=first.id;
@@ -176,4 +176,17 @@ function boot(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
 </script>
+<script>
+/* MileSplit v5.12: English-only temporary release. */
+(function () {
+  try {
+    for (const key of ["milesplit_language","language","selectedLanguage","preferredLanguage"]) {
+      localStorage.setItem(key, "en");
+    }
+  } catch (_) {}
+  window.__MILESPLIT_BOOT_LANGUAGE__ = "en";
+  window.__MILESPLIT_LANGUAGE_LOCKED__ = true;
+})();
+</script>
+
 </body></html>
