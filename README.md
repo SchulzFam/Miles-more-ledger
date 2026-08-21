@@ -1,7 +1,5 @@
-# MileSplit v5.13
+# MileSplit v5.14
 
-English-only stable release. Language selection and automatic phone-language detection are removed for now.
+Home Screen startup refresh repair. English-only. Centered gray v5.14 marker at bottom of Home Screen.
 
-This release preserves the current visual design and functionality while restoring the reliable Home Screen hydration path used by the last known-good release. The Home Screen now reloads the persisted ledger on startup/pageshow/focus/visibility, uses the main MileSplit storage key first, and only falls back to legacy/other storage when necessary.
-
-MILESPLIT_RELEASE: 5.13
+MILESPLIT_RELEASE: 5.14
