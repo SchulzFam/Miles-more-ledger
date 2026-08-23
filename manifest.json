@@ -3,15 +3,15 @@
   "short_name": "MileSplit",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#f2f7f6",
-  "theme_color": "#0d3d3d",
+  "background_color": "#F5F9F8",
+  "theme_color": "#0D3D3D",
   "icons": [
     {
-      "src": "assets/milesplit-icon.png",
-      "sizes": "512x512",
+      "src": "icon.png",
+      "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "description": "MileSplit v5.14"
+  "description": "MileSplit v5.12 \u2014 English only"
 }
