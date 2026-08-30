@@ -1,3 +1,3 @@
-# MileSplit v5.16
+# MileSplit v5.17
 
-Fixes the Home Screen startup regression by removing the obsolete Home-screen Data/Backup event listeners while retaining the Settings handlers.
+Removed Reconcile. Upgraded transaction added/updated feedback to a larger non-blocking success toast with a checkmark and supporting message.
