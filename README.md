@@ -1,5 +1,3 @@
-# MileSplit v5.19
+# MileSplit v5.17
 
-- Restored the actual Transaction Type selector categories; Ownership remains Personal/Company.
-- Removed the redundant View history button beside Add Transaction.
-- Styled Add Transaction heading consistently with Balances and Recent Transactions.
+Removed Reconcile. Upgraded transaction added/updated feedback to a larger non-blocking success toast with a checkmark and supporting message.
