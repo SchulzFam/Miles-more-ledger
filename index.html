@@ -1,4 +1,4 @@
-<!-- MILESPLIT_RELEASE: 5.23 -->
+<!-- MILESPLIT_RELEASE: 5.24 -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -26,27 +26,27 @@
 .page-view{min-width:0}.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:0 0 18px}.page-head h2{font-size:24px;line-height:1.15;margin:0}.wrap{padding-bottom:110px}
 
 @media(max-width:700px){
-  .historyView,.page-view{min-width:0;max-width:100%;overflow-x:hidden}
+  .historyView,.page-view{min-width:0;max-width:100%;width:100%;overflow-x:hidden}
   #historyView .history-summary{padding-bottom:10px}
-  #historyView table{width:100%;display:block;table-layout:fixed}
+  #historyView table{width:100%;max-width:100%;display:block;table-layout:fixed;overflow:hidden}
   #historyView thead{display:none}
-  #historyView tbody{display:block;width:100%}
-  #historyView tr{display:grid;grid-template-columns:62px minmax(0,1fr) minmax(64px,auto);column-gap:8px;row-gap:3px;width:100%;padding:10px 0;border-bottom:1px solid #e7eeec}
-  #historyView td{border:0;padding:2px 0;min-width:0;overflow-wrap:anywhere;word-break:normal}
+  #historyView tbody{display:block;width:100%;max-width:100%;overflow:hidden}
+  #historyView tr{display:grid;grid-template-columns:52px minmax(0,1fr);column-gap:8px;row-gap:2px;width:100%;max-width:100%;padding:10px 0;border-bottom:1px solid #e7eeec;overflow:hidden}
+  #historyView td{border:0;padding:2px 0;min-width:0;max-width:100%;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}
   #historyView td:nth-child(1){grid-column:1;grid-row:1 / span 3;font-size:12px;line-height:1.2}
-  #historyView td:nth-child(2){grid-column:2;grid-row:1;}
-  #historyView td:nth-child(3){grid-column:2;grid-row:2;font-size:13px;line-height:1.25}
-  #historyView td:nth-child(4){grid-column:3;grid-row:1;text-align:right;align-self:start}
-  #historyView td:nth-child(5){grid-column:3;grid-row:2;text-align:right;font-size:11px;line-height:1.2}
-  #historyView td:nth-child(6){grid-column:2 / 4;grid-row:3;padding-top:6px}
-  #historyView .history-actions{justify-content:flex-start;display:flex;gap:6px;flex-wrap:wrap}
-  #historyView .small-btn{min-height:32px;padding:6px 10px}
+  #historyView td:nth-child(2){grid-column:2;grid-row:1;min-width:0}
+  #historyView td:nth-child(3){grid-column:2;grid-row:2;font-size:13px;line-height:1.25;min-width:0}
+  #historyView td:nth-child(4){grid-column:2;grid-row:1;text-align:right;align-self:start;padding-left:8px;min-width:0}
+  #historyView td:nth-child(5){grid-column:2;grid-row:2;text-align:right;font-size:11px;line-height:1.2;padding-left:8px;min-width:0}
+  #historyView td:nth-child(6){grid-column:1 / -1;grid-row:3;padding-top:7px;min-width:0;max-width:100%}
+  #historyView .history-actions{justify-content:flex-start;display:flex;gap:6px;flex-wrap:wrap;width:100%;max-width:100%}
+  #historyView .small-btn{min-height:32px;padding:6px 10px;max-width:100%;white-space:nowrap}
   #historyView .pill{max-width:100%;white-space:normal;line-height:1.15}
   #historyView .amount-cell{white-space:nowrap;font-size:15px}
-  #historyView .year{overflow:hidden}
+  #historyView .year{overflow:hidden;max-width:100%}
 }
 @media(max-width:380px){
-  #historyView tr{grid-template-columns:55px minmax(0,1fr) minmax(58px,auto);column-gap:6px}
+  #historyView tr{grid-template-columns:48px minmax(0,1fr);column-gap:6px}
   #historyView .small-btn{font-size:13px;padding:5px 8px}
 }
 </style>
@@ -67,12 +67,12 @@
 <section class="panel" id="transactionPanel" style="display:none"><div class="sectionline"><h2 id="addHeading">Add transaction</h2><span class="hint" id="signHint">Positive = earned · Negative = spent</span></div><form id="txForm" class="form-grid"><input type="hidden" id="editId"><label id="typeLabel">Type<select id="type"><option value="flight">Flight</option><option value="personal_credit_card">Personal credit card</option><option value="company_credit_card">Company credit card</option><option value="hotel">Hotel</option><option value="transfer">Transfer</option><option value="other">Other</option></select></label><label id="dateLabel">Date<input id="date" type="date" required></label><label id="milesLabel">Miles / points<input id="miles" type="number" step="1" required></label><label id="ownerLabel">Ownership<select id="owner"><option value="business">Company</option><option value="personal">Personal</option></select></label><div id="flightFields" class="full" style="display:none"><div class="form-grid"><label id="airlineLabel">Airline<input id="airline"></label><label id="flightLabel">Flight number<input id="flight"></label><label id="routeLabel">Route<input id="route"></label></div></div><div id="hotelFields" class="full" style="display:none"><div class="form-grid"><label id="hotelLabel">Hotel / group<input id="hotel"></label><label id="locationLabel">Location / stay<input id="location"></label></div></div><div id="cardFields" class="full" style="display:none"><label id="cardLabel">Card / account<input id="card"></label></div><label class="full" id="descriptionLabel">Description<input id="description"></label><div class="full form-actions"><button class="primary" id="submitBtn" type="submit">Add transaction</button><button class="secondary" id="cancelEdit" type="button" style="display:none">Cancel edit</button></div></form></section>
 <section class="page-view" id="historyView" style="display:none"><div class="page-head"><h2 id="historyTitle">Transaction history</h2></div><div class="history-summary"><div class="hint" id="historyFilter"></div><div class="balance" id="historyBalance">0</div></div><div id="historyWarning"></div><div id="historyTable"></div></section>
 <section class="page-view" id="settingsView" style="display:none"><div class="page-head"><h2 id="settingsPageTitle">Settings</h2><div class="hint" id="settingsPageSub">Loyalty programs & data</div></div><div class="panel"><h2 id="programsHeading">Loyalty programs</h2><div id="programList"></div><div class="panel" style="margin-top:14px;background:#f7faf9"><h2 id="addProgramHeading">Add program</h2><form id="programForm" class="form-grid"><label id="newProgramLabel">Program name<input id="newProgram" required></label><label id="newUnitLabel">Unit type<select id="newUnit"><option value="miles">Miles</option><option value="points">Points</option></select></label><div class="full"><button class="primary" type="submit" id="addProgramBtn">Add program</button></div></form></div></div><div class="panel"><h2 id="dataHeading">Data & backup</h2><div class="form-actions"><button class="secondary" id="exportBtn2" type="button">Export CSV</button><button class="secondary" id="backupBtn2" type="button">Backup data</button><label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer">Restore backup<input id="restore2" type="file" accept=".json" style="display:none"></label></div></div></section>
-<div id="milesplit-version" style="text-align:center;color:#8a9698;font-size:12px;line-height:1.4;padding:10px 0 18px">v5.23</div>
+<div id="milesplit-version" style="text-align:center;color:#8a9698;font-size:12px;line-height:1.4;padding:10px 0 18px">v5.24</div>
 
 
 <script>
 /* MILESPLIT_RELEASE: 5.19 */
-const MILESPLIT_APP_VERSION = "5.23";
+const MILESPLIT_APP_VERSION = "5.24";
 
 (function(){'use strict';
 const DATA_KEY='loyalty-ledger-v5';
