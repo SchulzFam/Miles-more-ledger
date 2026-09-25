@@ -1,0 +1,121 @@
+  };
+  try{const raw=localStorage.getItem(DATA_KEY);if(raw)current=readState(raw)}catch(e){}
+  let legacy=null;
+  for(const key of LEGACY_KEYS){
+    try{const raw=localStorage.getItem(key);if(!raw)continue;const x=readState(raw);if(x){legacy=x;break}}
+    catch(e){}
+  }
+  // Main/legacy keys remain authoritative. Only if neither is usable do we search
+  // other localStorage entries, and we choose the richest valid ledger rather than
+  // the first matching object.
+  if(!current&&!legacy){
+    const candidates=[];
+    try{
+      for(let i=0;i<localStorage.length;i++){
+        const key=localStorage.key(i);
+        if(!key||key===DATA_KEY||LEGACY_KEYS.includes(key))continue;
+        const raw=localStorage.getItem(key); if(!raw)continue;
+        const x=readState(raw); if(x)candidates.push(x);
+      }
+    }catch(e){}
+    candidates.sort((a,b)=>(b.transactions.length+b.programs.length)-(a.transactions.length+a.programs.length));
+    current=candidates[0]||null;
+  }
+  if(!current)return legacy||defaultState();
+  if(legacy){
+    const programByName=new Map(current.programs.map(p=>[p.name.toLowerCase(),p]));
+    legacy.programs.forEach(lp=>{
+      if(!current.programs.some(p=>p.id===lp.id)){
+        const sameName=programByName.get(lp.name.toLowerCase());
+        if(!sameName){current.programs.push({...lp});programByName.set(lp.name.toLowerCase(),lp)}
+      }
+    });
+    const ids=new Set(current.transactions.map(t=>t.id));
+    legacy.transactions.forEach(lt=>{if(!ids.has(lt.id)){current.transactions.push({...lt});ids.add(lt.id)}});
+    current.transactions.forEach(ct=>{
+      const same=legacy.transactions.find(lt=>lt.date===ct.date&&Number(lt.miles)===Number(ct.miles)&&lt.type===ct.type&&lt.programId===ct.programId&&((lt.description||'')===(ct.description||'')));
+      if(same&&ct.owner==='personal'&&same.owner==='business')ct.owner='business';
+    });
+  }
+  if(!current.programs.length)current.programs=defaultState().programs;
+  if(!current.programs.some(p=>!p.archived))current.programs[0].archived=false;
+  const active=current.programs.find(p=>p.id===current.activeProgramId&&!p.archived)||current.programs.find(p=>!p.archived)||current.programs[0];
+  if(active)current.activeProgramId=active.id;
+  return current;
+}
+state=load();
+function saveWithoutRender(){localStorage.setItem(DATA_KEY,JSON.stringify(state))}
+function save(){saveWithoutRender();render()}
+function activeProgram(){return state.programs.find(p=>p.id===state.activeProgramId&&!p.archived)||state.programs.find(p=>!p.archived)||state.programs[0]}
+function activeTx(){const p=activeProgram();return state.transactions.filter(t=>t.programId===p.id)}
+function balance(owner){return activeTx().filter(t=>t.owner===owner).reduce((s,t)=>s+Number(t.miles),0)}
+function typeLabel(t){return tr(typeNorm(t.type))}
+function details(t){const d=t.type==='flight'?[t.airline,t.flight].filter(Boolean).join(' ')+(t.route?' · '+t.route:''):t.type==='hotel'?[t.hotel||tr('hotel'),t.location].filter(Boolean).join(' · '):['card_company','card_personal'].includes(t.type)?t.card||'':t.description||'';return esc(d)}
+function iconSvg(kind){const common='class=\"tx-svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"';const m={other_earning:'<svg '+common+'><circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 8v8M8 12h8\"/></svg>',adjustment:'<svg '+common+'><path d=\"M7 4v16M4 7l3-3 3 3M17 20V4m-3 13 3 3 3-3\"/></svg>'};return m[kind]||m.other_earning}
+function icon(t){const k=typeNorm(t.type);const src={flight:'flight.png',hotel:'hotel.png',card_company:'card.png',card_personal:'card.png',redemption:'redemption.png'}[k];return '<span class=\"tx-icon\" aria-hidden=\"true\">'+(src?'<img src=\"'+src+'\" alt=\"\">':iconSvg(k))+'</span>'}
+function render(){const p=activeProgram(),tx=activeTx(),biz=balance('business'),per=balance('personal'),total=biz+per;document.querySelectorAll('.unit').forEach(e=>e.textContent=p.unit==='points'?tr('points'):tr('miles'));$('business').textContent=fmt(biz);$('personal').textContent=fmt(per);$('total').textContent=fmt(total);$('business').classList.toggle('negative',biz<0);$('personal').classList.toggle('negative',per<0);$('total').classList.toggle('negative',total<0);renderPrograms();const sorted=tx.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id));$('recentWrap').innerHTML=sorted.length?'<ul class="recent-list">'+sorted.slice(0,4).map(t=>'<li class="recent-item">'+icon(t)+'<div class="recent-date">'+esc(formatDate(t.date))+'</div><div><div class="recent-title">'+esc(detailsPlain(t))+'</div><div class="recent-sub">'+esc(typeLabel(t))+'</div></div><div class="amount '+(t.miles<0?'neg':'pos')+'">'+(t.miles>0?'+':'')+fmt(t.miles)+'<div class="owner '+(t.owner==='business'?'company':'personal')+'">'+tr(t.owner)+'</div></div></li>').join('')+'</ul>':'<div class="empty">'+tr('noRecent',{program:esc(p.name)})+'</div>'}
+function detailsPlain(t){if(t.type==='flight')return [t.airline,t.flight].filter(Boolean).join(' ')||tr('flight');if(t.type==='hotel')return [t.hotel,t.location].filter(Boolean).join(' · ')||tr('hotel');if(t.type==='card_company'||t.type==='card_personal')return t.card||tr(t.type);return t.description||typeLabel(t)}
+function formatDate(s){if(!s)return'';const d=new Date(s+'T00:00:00');return d.toLocaleDateString(lang==='de'?'de-DE':'en-US',{month:'short',day:'numeric'})}
+function renderPrograms(){
+  const select=$('programSelect');
+  if(!select)return;
+  let list=(Array.isArray(state&&state.programs)?state.programs:[]).filter(p=>p&&!p.archived);
+  if(!list.length && Array.isArray(state&&state.programs) && state.programs.length){
+    state.programs[0].archived=false;
+    list=[state.programs[0]];
+  }
+  if(!list.length){
+    state=defaultState();
+    list=state.programs.slice();
+  }
+  const ap=activeProgram()||list[0];
+  select.innerHTML=list.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.name)+'</option>').join('');
+  if(ap){state.activeProgramId=ap.id;select.value=ap.id;}
+}
+function applyI18n(){document.documentElement.lang=lang;$('balancesHeading').textContent=tr('balances');$('companyCard').querySelector('.label').textContent=tr('company');$('personalCard').querySelector('.label').textContent=tr('personal');$('totalCard').querySelector('.label').textContent=tr('total');$('recentHeading').textContent=tr('recent');$('settingsPageTitle').textContent=tr('settings');$('settingsPageSub').textContent=tr('manage')+' · '+tr('data');$('addHeading').textContent=$('editId').value?tr('edit'):tr('add');$('signHint').textContent=tr('positive');$('reconcileHeading').textContent=tr('reconcile');$('accountBalanceLabel').childNodes[0].textContent=tr('currentBalance')+' ';$('reconcileBtn').textContent=tr('check');$('programsHeading').textContent=tr('programs');$('addProgramHeading').textContent=tr('addProgram');$('newProgramLabel').childNodes[0].textContent=tr('programName')+' ';$('newUnitLabel').childNodes[0].textContent=tr('unit')+' ';$('addProgramBtn').textContent=tr('addProgram');$('dataHeading').textContent=tr('data');$('flightLabel').childNodes[0].textContent=tr('flightNo')+' ';$('airlineLabel').childNodes[0].textContent=tr('airline')+' ';$('routeLabel').childNodes[0].textContent=tr('route')+' ';$('hotelLabel').childNodes[0].textContent=tr('hotelName')+' ';$('locationLabel').childNodes[0].textContent=tr('location')+' ';$('cardLabel').childNodes[0].textContent=tr('card')+' ';$('descriptionLabel').childNodes[0].textContent=tr('description')+' ';$('newProgram').placeholder='';$('airline').placeholder=tr('flightPlaceholder');$('flight').placeholder=tr('flightNoPlaceholder');$('route').placeholder=tr('routePlaceholder');$('hotel').placeholder=tr('hotelPlaceholder');$('location').placeholder=tr('locationPlaceholder');$('card').placeholder=tr('cardPlaceholder');$('description').placeholder=tr('descriptionPlaceholder');renderTypeOptions();applyUnitOptions()}
+function renderTypeOptions(){const val=$('type').value||'flight',opts=['flight','hotel','card_company','card_personal','other_earning','redemption','adjustment'];$('type').innerHTML=opts.map(x=>'<option value="'+x+'">'+tr(x)+'</option>').join('');$('type').value=opts.includes(val)?val:'flight';updateFields()}
+function applyUnitOptions(){const val=$('newUnit').value||'miles';$('newUnit').innerHTML='<option value="miles">'+tr('miles')+'</option><option value="points">'+tr('points')+'</option>';$('newUnit').value=val==='points'?'points':'miles'}
+function updateFields(){const t=$('type').value;$('flightFields').style.display=t==='flight'?'block':'none';$('hotelFields').style.display=t==='hotel'?'block':'none';$('cardFields').style.display=t==='card_company'||t==='card_personal'?'block':'none';if(t==='card_company')$('owner').value='business';if(t==='card_personal')$('owner').value='personal'}
+function setForm(t){$('editId').value=t?t.id:'';$('type').value=t?typeNorm(t.type):'flight';$('date').value=t?t.date:'';$('miles').value=t?Number(t.miles):'';$('owner').value=t?ownerNorm(t.owner):'business';$('airline').value=t?t.airline:'';$('flight').value=t?t.flight:'';$('route').value=t?t.route:'';$('hotel').value=t?t.hotel:'';$('location').value=t?t.location:'';$('card').value=t?t.card:'';$('description').value=t?t.description:'';renderTypeOptions();$('submitBtn').textContent=t?tr('save'):tr('add');$('cancelEdit').textContent=tr('cancel');$('cancelEdit').style.display=t?'inline-block':'none';$('addHeading').textContent=t?tr('edit'):tr('add')}
+function toast(message,sub){$('toastText').textContent=message;$('toastSub').textContent=sub||'Your balance has been updated.';$('toast').classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>$('toast').classList.remove('show'),2800)}
+function sortNewest(a){return a.slice().sort((x,y)=>y.date.localeCompare(x.date)||y.id.localeCompare(x.id))}
+function renderHistory(owner){let a=owner?activeTx().filter(t=>t.owner===owner):activeTx();a=sortNewest(a);const years={};a.forEach(t=>{const y=t.date?t.date.slice(0,4):'—';(years[y]||(years[y]=[])).push(t)});const ys=Object.keys(years).sort().reverse();$('historyTable').innerHTML=ys.length?ys.map((y,i)=>'<details class="year" '+(i===0?'open':'')+'><summary>'+esc(y)+' · '+years[y].length+'</summary>'+tableFor(years[y])+'</details>').join(''):'<div class="empty">'+tr('noCategory')+'</div>'}
+function tableFor(a){return '<table><thead><tr><th>'+tr('date')+'</th><th>'+tr('type')+'</th><th>'+tr('description')+'</th><th>'+esc(activeProgram().unit==='points'?tr('points'):tr('miles'))+'</th><th>'+tr('ownership')+'</th><th></th></tr></thead><tbody>'+a.map(t=>'<tr><td>'+esc(t.date)+'</td><td><span class="pill '+(t.miles<0?'spend':'earn')+'">'+esc(typeLabel(t))+'</span></td><td>'+details(t)+'</td><td class="amount-cell">'+(t.miles>0?'+':'')+fmt(t.miles)+'</td><td>'+esc(tr(t.owner))+'</td><td><div class="history-actions"><button class="small-btn" onclick="editTx(\''+esc(t.id)+'\')" type="button">'+tr('edit')+'</button><button class="small-btn delete-btn" onclick="deleteTx(\''+esc(t.id)+'\')" type="button">'+tr('delete')+'</button></div></td></tr>').join('')+'</tbody></table>'}
+function openHistory(owner){window.__historyOwner=owner||null;const p=activeProgram();$('historyTitle').textContent=owner?tr(owner)+' · '+p.name:tr('history')+' · '+p.name;$('historyFilter').textContent=owner?tr(owner):tr('all');$('historyBalance').textContent=fmt(owner?balance(owner):activeTx().reduce((s,t)=>s+Number(t.miles),0));renderHistory(owner);setNav('history')}
+window.editTx=id=>{const t=state.transactions.find(x=>x.id===id);if(!t)return;setForm(t);setNav('add')};
+window.deleteTx=id=>{const t=state.transactions.find(x=>x.id===id);if(!t)return;const ok=confirm(lang==='de'?'Diese Transaktion wirklich löschen?':'Delete this transaction?');if(!ok)return;state.transactions=state.transactions.filter(x=>x.id!==id);save();render();if($('historyView').style.display!=='none')renderHistory(window.__historyOwner);toast(lang==='de'?'Transaktion gelöscht':'Transaction deleted')};function closeModals(){setNav('home')}
+$('txForm').addEventListener('submit',e=>{e.preventDefault();const id=$('editId').value,type=$('type').value;let miles=Number($('miles').value);if(!Number.isFinite(miles)||!$('date').value){alert(lang==='de'?'Bitte Datum und gültigen Betrag eingeben.':'Please enter a date and valid amount.');return}if(type==='redemption'&&miles>0)miles=-miles;const obj={id:id||uid(),programId:activeProgram().id,date:$('date').value,type,miles,owner:ownerNorm($('owner').value),airline:$('airline').value.trim(),flight:$('flight').value.trim(),route:$('route').value.trim(),hotel:$('hotel').value.trim(),location:$('location').value.trim(),card:$('card').value.trim(),description:$('description').value.trim()};if(id){const i=state.transactions.findIndex(t=>t.id===id);if(i>=0)state.transactions[i]=obj}else state.transactions.push(obj);setForm(null);save();toast(tr(id?'updated':'added'))});
+$('cancelEdit').addEventListener('click',()=>setForm(null));$('type').addEventListener('change',updateFields);$('programSelect').addEventListener('change',()=>{state.activeProgramId=$('programSelect').value;saveWithoutRender();setForm(null);render();if($('historyView').style.display!=='none'){openHistory(window.__historyOwner)}});$('companyCard').addEventListener('click',()=>openHistory('business'));$('personalCard').addEventListener('click',()=>openHistory('personal'));
+function renderProgramList(){const list=state.programs.map((p,i)=>{const count=state.transactions.filter(t=>t.programId===p.id).length;return '<div class="program-row"><div class="drag-controls"><button type="button" onclick="moveProgram(\''+p.id+'\',-1)" '+(i===0?'disabled':'')+'>↑</button><button type="button" onclick="moveProgram(\''+p.id+'\',1)" '+(i===state.programs.length-1?'disabled':'')+'>↓</button></div><div class="program-main"><div class="program-name">'+esc(p.name)+'</div><div class="program-meta">'+esc(p.unit==='points'?tr('points'):tr('miles'))+' · '+count+' '+(count===1?'transaction':'transactions')+(p.id==='miles-more'?' · '+tr('default'):'')+(p.archived?' · '+tr('archive'):'')+'</div></div><div class="program-actions"><button class="small-btn" type="button" onclick="editProgram(\''+p.id+'\')">'+tr('edit')+'</button><button class="small-btn" type="button" onclick="toggleArchive(\''+p.id+'\')">'+(p.archived?tr('restoreProgram'):tr('archive'))+'</button></div></div><div id="edit-'+esc(p.id)+'"></div>'}).join('');$('programList').innerHTML=list}
+window.moveProgram=(id,dir)=>{const i=state.programs.findIndex(p=>p.id===id),j=i+dir;if(i<0||j<0||j>=state.programs.length)return;[state.programs[i],state.programs[j]]=[state.programs[j],state.programs[i]];save();renderProgramList()};
+window.editProgram=id=>{const p=state.programs.find(x=>x.id===id);if(!p)return;const host=$('edit-'+id);host.innerHTML='<div class="edit-box"><div class="form-grid"><label>Program name<input id="ename-'+esc(id)+'" value="'+esc(p.name)+'"></label><label>Unit type<select id="eunit-'+esc(id)+'"><option value="miles">'+tr('miles')+'</option><option value="points">'+tr('points')+'</option></select></label><div class="full form-actions"><button class="primary" type="button" onclick="saveProgram(\''+esc(id)+'\')">'+tr('save')+'</button></div></div></div>';$('eunit-'+id).value=p.unit==='points'?'points':'miles'};
+window.saveProgram=id=>{const p=state.programs.find(x=>x.id===id);if(!p)return;const name=$('ename-'+id).value.trim();if(!name)return;p.name=name;p.unit=$('eunit-'+id).value==='points'?'points':'miles';save();renderProgramList();toast(tr('programSaved'))};
+window.toggleArchive=id=>{const p=state.programs.find(x=>x.id===id);if(!p)return;if(p.archived){p.archived=false}else{p.archived=true;if(activeProgram().id===id){const next=state.programs.find(x=>!x.archived&&x.id!==id);if(next)state.activeProgramId=next.id}}save();renderProgramList()};
+$('programForm').addEventListener('submit',e=>{e.preventDefault();const name=$('newProgram').value.trim();if(!name)return;const p={id:uid(),name,unit:$('newUnit').value==='points'?'points':'miles',archived:false};state.programs.push(p);state.activeProgramId=p.id;$('newProgram').value='';save();renderProgramList();toast(tr('programAdded'))});
+
+function download(name,data,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportCSV(){const rows=[['Program','Unit','Date','Type','Airline','Flight','Route','Hotel','Location','Card','Amount','Ownership','Description']];state.transactions.forEach(t=>{const p=state.programs.find(p=>p.id===t.programId);rows.push([p?p.name:'',p?p.unit:'',t.date,typeLabel(t),t.airline,t.flight,t.route,t.hotel,t.location,t.card,t.miles,t.owner,t.description])});download('milesplit-transactions.csv',rows.map(r=>r.map(x=>'"'+String(x??'').replaceAll('"','""')+'"').join(',')).join('\n'),'text/csv')}
+function backup(){download('milesplit-backup.json',JSON.stringify(state,null,2),'application/json')}
+function restoreFile(file){const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!validateState(x))throw new Error('shape');const next=normalizeState(x);if(state.transactions.length>0&&next.transactions.length===0)throw new Error('empty');if(state.programs.length>1&&next.programs.length<state.programs.length)throw new Error('destructive');state=next;save();alert(tr('restored'))}catch(e){alert(e.message==='empty'||e.message==='destructive'?tr('backupRejected'):tr('invalidBackup'))}};r.readAsText(file)}
+$('exportBtn2').addEventListener('click',exportCSV);$('backupBtn2').addEventListener('click',backup);$('restore2').addEventListener('change',e=>{if(e.target.files[0])restoreFile(e.target.files[0]);e.target.value=''});
+function hydrateHome(){
+  try{
+    state=load();
+    const usable=state.programs.filter(p=>p&&!p.archived);
+    if(!usable.length && state.programs.length)state.programs[0].archived=false;
+    if(!state.activeProgramId||!state.programs.some(p=>p.id===state.activeProgramId&&!p.archived)){
+      const first=state.programs.find(p=>!p.archived)||state.programs[0];
+      if(first)state.activeProgramId=first.id;
+    }
+    lang='en';
+    renderPrograms();
+    render();
+    applyI18n();
+    renderPrograms();
+    render();
+    setForm(null);
+    setNav('home');
+  }catch(e){console.error('MileSplit home render failed',e)}
+}
+function setNav(which){const home=which==='home',add=which==='add',history=which==='history',settings=which==='settings';$('homeOverview').style.display=home?'block':'none';$('homeRecent').style.display=home?'block':'none';$('transactionPanel').style.display=add?'block':'none';$('historyView').style.display=history?'block':'none';$('settingsView').style.display=settings?'block':'none';['navHome','navAdd','navHistory','navSettings'].forEach(id=>$(id).classList.remove('active'));const aid=home?'navHome':add?'navAdd':history?'navHistory':'navSettings';$(aid).classList.add('active');['navHome','navAdd','navHistory','navSettings'].forEach(id=>$(id).removeAttribute('aria-current'));$(aid).setAttribute('aria-current','page');window.scrollTo({top:0,behavior:'smooth'})}
+$('navHome').addEventListener('click',()=>setNav('home'));$('navAdd').addEventListener('click',()=>setNav('add'));$('navHistory').addEventListener('click',()=>openHistory());$('navSettings').addEventListener('click',()=>{setNav('settings');renderProgramList()});
