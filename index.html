@@ -1,4 +1,4 @@
-<!-- MILESPLIT_RELEASE: 5.27 -->
+<!-- MILESPLIT_RELEASE: 5.28 -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -71,11 +71,11 @@
 <section class="panel" id="transactionPanel" style="display:none"><div class="sectionline"><h2 id="addHeading">Add transaction</h2><span class="hint" id="signHint">Positive = earned · Negative = spent</span></div><form id="txForm" class="form-grid"><input type="hidden" id="editId"><label id="typeLabel">Type<select id="type"><option value="flight">Flight</option><option value="personal_credit_card">Personal credit card</option><option value="company_credit_card">Company credit card</option><option value="hotel">Hotel</option><option value="transfer">Transfer</option><option value="other">Other</option></select></label><label id="dateLabel">Date<input id="date" type="date" required></label><label id="milesLabel">Miles / points<input id="miles" type="number" step="1" required></label><label id="ownerLabel">Ownership<select id="owner"><option value="business">Company</option><option value="personal">Personal</option></select></label><div id="flightFields" class="full" style="display:none"><div class="form-grid"><label id="airlineLabel">Airline<input id="airline"></label><label id="flightLabel">Flight number<input id="flight"></label><label id="routeLabel">Route<input id="route"></label></div></div><div id="hotelFields" class="full" style="display:none"><div class="form-grid"><label id="hotelLabel">Hotel / group<input id="hotel"></label><label id="locationLabel">Location / stay<input id="location"></label></div></div><div id="cardFields" class="full" style="display:none"><label id="cardLabel">Card / account<input id="card"></label></div><label class="full" id="descriptionLabel">Description<input id="description"></label><div class="full form-actions"><button class="primary" id="submitBtn" type="submit">Add transaction</button><button class="secondary" id="cancelEdit" type="button" style="display:none">Cancel edit</button></div></form></section>
 <section class="page-view" id="historyView" style="display:none"><div class="page-head"><h2 id="historyTitle">Transaction history</h2></div><div class="history-summary"><div class="hint" id="historyFilter"></div><div class="balance" id="historyBalance">0</div></div><div id="historyWarning"></div><div id="historyTable"></div></section>
 <section class="page-view" id="settingsView" style="display:none"><div class="page-head"><h2 id="settingsPageTitle">Settings</h2><div class="hint" id="settingsPageSub">Loyalty programs & data</div></div><div class="panel"><h2 id="programsHeading">Loyalty programs</h2><div id="programList"></div><div class="panel" style="margin-top:14px;background:#f7faf9"><h2 id="addProgramHeading">Add program</h2><form id="programForm" class="form-grid"><label id="newProgramLabel">Program name<input id="newProgram" required></label><label id="newUnitLabel">Unit type<select id="newUnit"><option value="miles">Miles</option><option value="points">Points</option></select></label><div class="full"><button class="primary" type="submit" id="addProgramBtn">Add program</button></div></form></div></div><div class="panel"><h2 id="dataHeading">Data & backup</h2><div class="form-actions"><button class="secondary" id="exportBtn2" type="button">Export CSV</button><button class="secondary" id="backupBtn2" type="button">Backup data</button><label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer">Restore backup<input id="restore2" type="file" accept=".json" style="display:none"></label></div></div></section>
-<div id="milesplit-version" style="text-align:center;color:#8a9698;font-size:12px;line-height:1.4;padding:10px 0 18px">v5.27</div>
+<div id="milesplit-version" style="text-align:center;color:#8a9698;font-size:12px;line-height:1.4;padding:10px 0 18px">v5.28</div>
 
 
 <script>
-/* MILESPLIT_RELEASE: 5.27 */
+/* MILESPLIT_RELEASE: 5.28 */
 const MILESPLIT_APP_VERSION = "5.26";
 
 (function(){'use strict';
@@ -250,3 +250,46 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 </body></html>
+<style id="v528-layout-fix">
+/* v5.28: restore compact header and make mobile layouts strictly viewport-bound */
+header{padding:8px 24px;margin:-10px -24px 18px}
+.header-inner{height:48px;min-height:48px;max-height:48px;gap:12px}
+.brand{min-width:0;flex:0 1 auto}
+.brand img{width:40px;height:40px;max-width:40px;max-height:40px;flex:0 0 40px}
+.brandname{font-size:27px;line-height:1;max-width:100%;overflow:hidden}
+.program-select-wrap{flex:0 1 210px;min-width:0;max-width:210px}
+.program-select{width:100%;max-width:none;min-width:0;height:40px;min-height:40px;box-sizing:border-box;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:600px){
+  .wrap{padding:8px 14px 40px;overflow-x:hidden}
+  header{margin:-8px -14px 18px;padding:8px 14px;height:64px;overflow:hidden}
+  .header-inner{height:48px;min-height:48px;max-height:48px;gap:8px}
+  .brand{flex:0 1 auto;min-width:0;max-width:calc(100% - 120px)}
+  .brand img{width:40px;height:40px;max-width:40px;max-height:40px;flex-basis:40px}
+  .brandname{font-size:25px;line-height:1}
+  .program-select-wrap{flex:1 1 auto;min-width:0;max-width:none}
+  .program-select{width:100%;min-width:0;max-width:none;padding-left:10px;padding-right:30px}
+  .page-view,.panel,#historyView,#settingsView{min-width:0;max-width:100%;width:100%;overflow-x:hidden}
+  .page-head{min-width:0;max-width:100%}
+  .page-head h2{min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:break-word}
+  #historyView #historyTable,#historyView table,#historyView tbody{display:block;width:100%;max-width:100%;min-width:0;overflow:visible}
+  #historyView tr{display:grid;grid-template-columns:50px minmax(0,1fr) 74px;grid-template-rows:auto auto auto;width:100%;max-width:100%;min-width:0;box-sizing:border-box;column-gap:7px;row-gap:2px;padding:11px 0;border-bottom:1px solid #e7eeec;overflow:visible}
+  #historyView td{display:block;box-sizing:border-box;min-width:0!important;max-width:100%!important;width:auto!important;overflow:hidden;overflow-wrap:anywhere;word-break:break-word;padding:2px 0;border:0}
+  #historyView td:nth-child(1){grid-column:1;grid-row:1 / span 2;font-size:12px;line-height:1.2}
+  #historyView td:nth-child(2){grid-column:2;grid-row:1}
+  #historyView td:nth-child(3){grid-column:2;grid-row:2;font-size:13px;line-height:1.25}
+  #historyView td:nth-child(4){grid-column:3;grid-row:1;text-align:right;font-size:15px;line-height:1.2;padding-left:3px;white-space:nowrap;overflow:hidden}
+  #historyView td:nth-child(5){grid-column:3;grid-row:2;text-align:right;font-size:11px;line-height:1.2;padding-left:3px;white-space:normal}
+  #historyView td:nth-child(6){grid-column:1 / -1;grid-row:3;width:100%!important;padding-top:8px;overflow:visible}
+  #historyView .history-actions{display:flex;width:100%;max-width:100%;justify-content:flex-start;align-items:center;gap:7px;flex-wrap:wrap;overflow:visible}
+  #historyView .small-btn{box-sizing:border-box;min-width:0;max-width:calc(50% - 4px);min-height:32px;padding:6px 12px;white-space:nowrap}
+  #historyView .pill{max-width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.15}
+  #historyView .details img,#historyView .details .tx-icon{max-width:100%}
+  #historyView .amount-cell{white-space:nowrap}
+  .program-row{grid-template-columns:26px minmax(0,1fr);min-width:0;max-width:100%;overflow:hidden}
+  .program-main{min-width:0;max-width:100%;overflow:hidden}
+  .program-meta{overflow-wrap:anywhere;word-break:break-word}
+  .program-actions{grid-column:2;min-width:0;max-width:100%;justify-content:flex-start;overflow:visible}
+  .edit-box{min-width:0;max-width:100%;overflow:hidden}
+  .edit-box .form-grid,.label-settings .form-grid,.custom-label-grid{min-width:0;max-width:100%}
+}
+</style>
