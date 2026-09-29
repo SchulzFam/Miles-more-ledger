@@ -1,4 +1,4 @@
-<!-- MILESPLIT_RELEASE: 5.29 -->
+<!-- MILESPLIT_RELEASE: 5.30 -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -53,7 +53,28 @@
 /* v5.25: use the supplied source icons in the navigation ribbon */
 .nav-source-icon{width:34px;height:34px;display:block;object-fit:contain}.nav-item{overflow:hidden}.nav-item.active .nav-source-icon{width:36px;height:36px}
 @media(max-width:600px){.header-inner{height:56px;min-height:56px}.brand img{width:42px;height:42px}.brandname{font-size:25px}.nav-source-icon{width:32px;height:32px}.nav-item.active .nav-source-icon{width:34px;height:34px}}
-.label-settings .form-grid{grid-template-columns:1fr 1fr;min-width:0}.edit-box .form-grid{grid-template-columns:1fr 1fr;min-width:0}.custom-label-grid{min-width:0}@media(max-width:600px){.label-settings .form-grid,.edit-box .form-grid,.custom-label-grid{grid-template-columns:1fr!important}}</style>
+.label-settings .form-grid{grid-template-columns:1fr 1fr;min-width:0}.edit-box .form-grid{grid-template-columns:1fr 1fr;min-width:0}.custom-label-grid{min-width:0}@media(max-width:600px){.label-settings .form-grid,.edit-box .form-grid,.custom-label-grid{grid-template-columns:1fr!important}}
+/* v5.30: robust containment for narrow preview/iPhone widths */
+html,body{width:100%;max-width:100%;overflow-x:hidden;}
+.wrap{width:100%;max-width:1040px;min-width:0;}
+.cards{width:100%;min-width:0;}
+.recent-section,.recent-list{width:100%;min-width:0;}
+.recent-item{width:100%;min-width:0;box-sizing:border-box;}
+@media(max-width:800px){
+  .wrap{padding-left:14px;padding-right:14px;}
+  header{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px;}
+  .header-inner{min-width:0;}
+  .brand{min-width:0;max-width:46%;}
+  .brandname{font-size:25px;overflow:hidden;text-overflow:ellipsis;}
+  .program-select-wrap{flex:1 1 0;min-width:0;}
+  .program-select{width:100%;max-width:none;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+  .cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+  .card{min-width:0;padding-left:8px;padding-right:8px;}
+  .card .label,.card .unit{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .value{font-size:clamp(17px,4.8vw,22px);min-width:0;overflow:hidden;text-overflow:ellipsis;}
+  .recent-item{grid-template-columns:28px 49px minmax(0,1fr) minmax(64px,auto);gap:6px;padding-left:4px;padding-right:4px;}
+}
+</style>
 </head>
 <body>
 <nav class="bottom-nav" id="bottomNav" aria-label="Main navigation">
@@ -71,7 +92,7 @@
 <section class="panel" id="transactionPanel" style="display:none"><div class="sectionline"><h2 id="addHeading">Add transaction</h2><span class="hint" id="signHint">Positive = earned · Negative = spent</span></div><form id="txForm" class="form-grid"><input type="hidden" id="editId"><label id="typeLabel">Type<select id="type"><option value="flight">Flight</option><option value="personal_credit_card">Personal credit card</option><option value="company_credit_card">Company credit card</option><option value="hotel">Hotel</option><option value="transfer">Transfer</option><option value="other">Other</option></select></label><label id="dateLabel">Date<input id="date" type="date" required></label><label id="milesLabel">Miles / points<input id="miles" type="number" step="1" required></label><label id="ownerLabel">Ownership<select id="owner"><option value="business">Company</option><option value="personal">Personal</option></select></label><div id="flightFields" class="full" style="display:none"><div class="form-grid"><label id="airlineLabel">Airline<input id="airline"></label><label id="flightLabel">Flight number<input id="flight"></label><label id="routeLabel">Route<input id="route"></label></div></div><div id="hotelFields" class="full" style="display:none"><div class="form-grid"><label id="hotelLabel">Hotel / group<input id="hotel"></label><label id="locationLabel">Location / stay<input id="location"></label></div></div><div id="cardFields" class="full" style="display:none"><label id="cardLabel">Card / account<input id="card"></label></div><label class="full" id="descriptionLabel">Description<input id="description"></label><div class="full form-actions"><button class="primary" id="submitBtn" type="submit">Add transaction</button><button class="secondary" id="cancelEdit" type="button" style="display:none">Cancel edit</button></div></form></section>
 <section class="page-view" id="historyView" style="display:none"><div class="page-head"><h2 id="historyTitle">Transaction history</h2></div><div class="history-summary"><div class="hint" id="historyFilter"></div><div class="balance" id="historyBalance">0</div></div><div id="historyWarning"></div><div id="historyTable"></div></section>
 <section class="page-view" id="settingsView" style="display:none"><div class="page-head"><h2 id="settingsPageTitle">Settings</h2><div class="hint" id="settingsPageSub">Loyalty programs & data</div></div><div class="panel"><h2 id="programsHeading">Loyalty programs</h2><div id="programList"></div><div class="panel" style="margin-top:14px;background:#f7faf9"><h2 id="addProgramHeading">Add program</h2><form id="programForm" class="form-grid"><label id="newProgramLabel">Program name<input id="newProgram" required></label><label id="newUnitLabel">Unit type<select id="newUnit"><option value="miles">Miles</option><option value="points">Points</option></select></label><div class="full"><button class="primary" type="submit" id="addProgramBtn">Add program</button></div></form></div></div><div class="panel"><h2 id="dataHeading">Data & backup</h2><div class="form-actions"><button class="secondary" id="exportBtn2" type="button">Export CSV</button><button class="secondary" id="backupBtn2" type="button">Backup data</button><label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer">Restore backup<input id="restore2" type="file" accept=".json" style="display:none"></label></div></div></section>
-<div id="milesplit-version" style="text-align:center;color:#8a9698;font-size:12px;line-height:1.4;padding:10px 0 18px">v5.29</div>
+<div id="milesplit-version" style="text-align:center;color:#8a9698;font-size:12px;line-height:1.4;padding:10px 0 18px">v5.30</div>
 
 
 <script>
@@ -252,7 +273,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <style id="v529-layout-fix">
-/* v5.29: mobile cards/recent rows must never expand the viewport */
+/* v5.30: mobile cards/recent rows must never expand the viewport */
 .cards,.card,.recent-list,.recent-item,.recent-item>div{min-width:0;max-width:100%;}
 .card{overflow:hidden;}
 .value{min-width:0;max-width:100%;font-size:clamp(19px,5.6vw,26px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
