@@ -1,4 +1,4 @@
-<!-- MILESPLIT_RELEASE: 5.31 -->
+<!-- MILESPLIT_RELEASE: 5.32 -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -54,7 +54,7 @@
 .nav-source-icon{width:34px;height:34px;display:block;object-fit:contain}.nav-item{overflow:hidden}.nav-item.active .nav-source-icon{width:36px;height:36px}
 @media(max-width:600px){.header-inner{height:56px;min-height:56px}.brand img{width:42px;height:42px}.brandname{font-size:25px}.nav-source-icon{width:32px;height:32px}.nav-item.active .nav-source-icon{width:34px;height:34px}}
 .label-settings .form-grid{grid-template-columns:1fr 1fr;min-width:0}.edit-box .form-grid{grid-template-columns:1fr 1fr;min-width:0}.custom-label-grid{min-width:0}@media(max-width:600px){.label-settings .form-grid,.edit-box .form-grid,.custom-label-grid{grid-template-columns:1fr!important}}
-/* v5.31: robust containment for narrow preview/iPhone widths */
+/* v5.32: robust containment for narrow preview/iPhone widths */
 html,body{width:100%;max-width:100%;overflow-x:hidden;}
 .wrap{width:100%;max-width:1040px;min-width:0;}
 .cards{width:100%;min-width:0;}
@@ -77,7 +77,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden;}
 </style>
 
 <style id="v531-mobile-layout-fix">
-/* v5.31: rebuild the narrow-screen transaction layouts instead of compressing the desktop grid. */
+/* v5.32: rebuild the narrow-screen transaction layouts instead of compressing the desktop grid. */
 @media (max-width: 700px){
   /* Home / Recent Transactions: explicit four-column geometry, with no intrinsic-width columns. */
   #homeRecent .recent-list{width:100%;max-width:100%;overflow:hidden;box-sizing:border-box;}
@@ -154,7 +154,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden;}
 <section class="panel" id="transactionPanel" style="display:none"><div class="sectionline"><h2 id="addHeading">Add transaction</h2><span class="hint" id="signHint">Positive = earned · Negative = spent</span></div><form id="txForm" class="form-grid"><input type="hidden" id="editId"><label id="typeLabel">Type<select id="type"><option value="flight">Flight</option><option value="personal_credit_card">Personal credit card</option><option value="company_credit_card">Company credit card</option><option value="hotel">Hotel</option><option value="transfer">Transfer</option><option value="other">Other</option></select></label><label id="dateLabel">Date<input id="date" type="date" required></label><label id="milesLabel">Miles / points<input id="miles" type="number" step="1" required></label><label id="ownerLabel">Ownership<select id="owner"><option value="business">Company</option><option value="personal">Personal</option></select></label><div id="flightFields" class="full" style="display:none"><div class="form-grid"><label id="airlineLabel">Airline<input id="airline"></label><label id="flightLabel">Flight number<input id="flight"></label><label id="routeLabel">Route<input id="route"></label></div></div><div id="hotelFields" class="full" style="display:none"><div class="form-grid"><label id="hotelLabel">Hotel / group<input id="hotel"></label><label id="locationLabel">Location / stay<input id="location"></label></div></div><div id="cardFields" class="full" style="display:none"><label id="cardLabel">Card / account<input id="card"></label></div><label class="full" id="descriptionLabel">Description<input id="description"></label><div class="full form-actions"><button class="primary" id="submitBtn" type="submit">Add transaction</button><button class="secondary" id="cancelEdit" type="button" style="display:none">Cancel edit</button></div></form></section>
 <section class="page-view" id="historyView" style="display:none"><div class="page-head"><h2 id="historyTitle">Transaction history</h2></div><div class="history-summary"><div class="hint" id="historyFilter"></div><div class="balance" id="historyBalance">0</div></div><div id="historyWarning"></div><div id="historyTable"></div></section>
 <section class="page-view" id="settingsView" style="display:none"><div class="page-head"><h2 id="settingsPageTitle">Settings</h2><div class="hint" id="settingsPageSub">Loyalty programs & data</div></div><div class="panel"><h2 id="programsHeading">Loyalty programs</h2><div id="programList"></div><div class="panel" style="margin-top:14px;background:#f7faf9"><h2 id="addProgramHeading">Add program</h2><form id="programForm" class="form-grid"><label id="newProgramLabel">Program name<input id="newProgram" required></label><label id="newUnitLabel">Unit type<select id="newUnit"><option value="miles">Miles</option><option value="points">Points</option></select></label><div class="full"><button class="primary" type="submit" id="addProgramBtn">Add program</button></div></form></div></div><div class="panel"><h2 id="dataHeading">Data & backup</h2><div class="form-actions"><button class="secondary" id="exportBtn2" type="button">Export CSV</button><button class="secondary" id="backupBtn2" type="button">Backup data</button><label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer">Restore backup<input id="restore2" type="file" accept=".json" style="display:none"></label></div></div></section>
-<div id="milesplit-version" style="text-align:center;color:#8a9698;font-size:12px;line-height:1.4;padding:10px 0 18px">v5.31</div>
+<div id="milesplit-version" style="text-align:center;color:#8a9698;font-size:12px;line-height:1.4;padding:10px 0 18px">v5.32</div>
 
 
 <script>
@@ -254,7 +254,7 @@ function balance(owner){return activeTx().filter(t=>t.owner===owner).reduce((s,t
 function typeLabel(t){return tr(typeNorm(t.type))}
 function details(t){const d=t.type==='flight'?[t.airline,t.flight].filter(Boolean).join(' ')+(t.route?' · '+t.route:''):t.type==='hotel'?[t.hotel||tr('hotel'),t.location].filter(Boolean).join(' · '):['card_company','card_personal'].includes(t.type)?t.card||'':t.description||'';return esc(d)}
 function iconSvg(kind){const common='class=\"tx-svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"';const m={other_earning:'<svg '+common+'><circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 8v8M8 12h8\"/></svg>',adjustment:'<svg '+common+'><path d=\"M7 4v16M4 7l3-3 3 3M17 20V4m-3 13 3 3 3-3\"/></svg>'};return m[kind]||m.other_earning}
-function icon(t){const k=typeNorm(t.type);const src={flight:'flight.png',hotel:'hotel.png',card_company:'card.png',card_personal:'card.png',redemption:'redemption.png'}[k];return '<span class=\"tx-icon\" aria-hidden=\"true\">'+(src?'<img src=\"'+src+'\" alt=\">':iconSvg(k))+'</span>'}
+function icon(t){const k=typeNorm(t.type);const src={flight:'flight.png',hotel:'hotel.png',card_company:'card.png',card_personal:'card.png',redemption:'redemption.png'}[k];return '<span class=\"tx-icon\" aria-hidden=\"true\">'+(src?'<img src=\"'+src+'\" alt=\"\">':iconSvg(k))+'</span>'}
 function ownershipLabel(program,owner){const p=program||activeProgram();const labels=p&&p.labels&&typeof p.labels==='object'?p.labels:(state&&state.labels)||{business:'Company',personal:'Personal'};return String(labels[owner]||(owner==='business'?'Company':'Personal'))}
 function renderOwnerOptions(){const select=$('owner');if(!select)return;const val=select.value||'business';select.innerHTML='<option value=\"business\">'+esc(ownershipLabel(activeProgram(),'business'))+'</option><option value=\"personal\">'+esc(ownershipLabel(activeProgram(),'personal'))+'</option>';select.value=val==='personal'?'personal':'business'}
 function render(){const p=activeProgram(),tx=activeTx(),biz=balance('business'),per=balance('personal'),total=biz+per;document.querySelectorAll('.unit').forEach(e=>e.textContent=p.unit==='points'?tr('points'):tr('miles'));$('companyCard').querySelector('.label').textContent=ownershipLabel(p,'business');$('personalCard').querySelector('.label').textContent=ownershipLabel(p,'personal');renderOwnerOptions();$('business').textContent=fmt(biz);$('personal').textContent=fmt(per);$('total').textContent=fmt(total);$('business').classList.toggle('negative',biz<0);$('personal').classList.toggle('negative',per<0);$('total').classList.toggle('negative',total<0);renderPrograms();const sorted=tx.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id));$('recentWrap').innerHTML=sorted.length?'<ul class="recent-list">'+sorted.slice(0,4).map(t=>'<li class="recent-item">'+icon(t)+'<div class="recent-date">'+esc(formatDate(t.date))+'</div><div><div class="recent-title">'+esc(detailsPlain(t))+'</div><div class="recent-sub">'+esc(typeLabel(t))+'</div></div><div class="amount '+(t.miles<0?'neg':'pos')+'">'+(t.miles>0?'+':'')+fmt(t.miles)+'<div class="owner '+(t.owner==='business'?'company':'personal')+'">'+esc(ownershipLabel(p,t.owner))+'</div></div></li>').join('')+'</ul>':'<div class="empty">'+tr('noRecent',{program:esc(p.name)})+'</div>'}
@@ -335,7 +335,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <style id="v529-layout-fix">
-/* v5.31: mobile cards/recent rows must never expand the viewport */
+/* v5.32: mobile cards/recent rows must never expand the viewport */
 .cards,.card,.recent-list,.recent-item,.recent-item>div{min-width:0;max-width:100%;}
 .card{overflow:hidden;}
 .value{min-width:0;max-width:100%;font-size:clamp(19px,5.6vw,26px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
