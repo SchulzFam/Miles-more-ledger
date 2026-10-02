@@ -12,3 +12,6 @@ Structural navigation update based on the known-good v5.18 build.
 
 ## v5.32
 Fixed malformed transaction icon HTML (`alt` attribute) that caused image-based recent transactions to break out of the home-screen container.
+
+## v5.33
+Fixed transaction History action placement. Edit and Delete are now rendered in a dedicated full-width row directly beneath each transaction, keeping both controls visible on desktop and narrow/mobile layouts without horizontal overflow. Existing edit/delete behavior is unchanged.

@@ -136,6 +136,27 @@ html,body{width:100%;max-width:100%;overflow-x:hidden;}
   #historyView #historyTable th{font-size:9px!important;}
 }
 </style>
+<style id="v533-history-actions-fix">
+/* v5.33: transaction actions live in their own full-width row beneath each transaction. */
+#historyView #historyTable table{width:100%;max-width:100%;}
+#historyView #historyTable .tx-row td{vertical-align:top;}
+#historyView #historyTable .tx-actions-row td{padding:6px 4px 10px;border-bottom:1px solid #e7eeec;}
+#historyView #historyTable .tx-actions-row .history-actions{display:flex;align-items:center;justify-content:flex-start;gap:7px;flex-wrap:wrap;width:100%;max-width:100%;}
+#historyView #historyTable .tx-actions-row .small-btn{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:6px 12px;white-space:nowrap;}
+#historyView #historyTable .tx-actions-row .delete-btn{color:#a93434;border-color:#e7bcbc;background:#fff;}
+#historyView #historyTable .desktop-action-spacer{padding:0;border-bottom:0;}
+@media (max-width:700px){
+  #historyView #historyTable .tx-actions-row{display:table-row!important;width:100%!important;}
+  #historyView #historyTable .tx-actions-row td{display:table-cell!important;width:100%!important;max-width:none!important;padding:7px 0 10px!important;overflow:visible!important;border-bottom:1px solid #e7eeec!important;}
+  #historyView #historyTable .tx-actions-row .history-actions{display:flex!important;justify-content:flex-start!important;align-items:center!important;gap:7px!important;flex-wrap:wrap!important;width:100%!important;max-width:100%!important;overflow:visible!important;}
+  #historyView #historyTable .tx-actions-row .small-btn{min-width:0!important;max-width:none!important;min-height:32px!important;padding:6px 12px!important;white-space:nowrap!important;}
+  #historyView #historyTable .tx-row td:nth-child(6){display:table-cell!important;width:0!important;padding:0!important;border:0!important;font-size:0!important;}
+}
+@media (max-width:380px){
+  #historyView #historyTable .tx-actions-row td{padding-top:6px!important;}
+  #historyView #historyTable .tx-actions-row .small-btn{padding:6px 10px!important;font-size:13px!important;}
+}
+</style>
 
 </head>
 <body>
@@ -284,7 +305,7 @@ function setForm(t){$('editId').value=t?t.id:'';$('type').value=t?typeNorm(t.typ
 function toast(message,sub){$('toastText').textContent=message;$('toastSub').textContent=sub||'Your balance has been updated.';$('toast').classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>$('toast').classList.remove('show'),2800)}
 function sortNewest(a){return a.slice().sort((x,y)=>y.date.localeCompare(x.date)||y.id.localeCompare(x.id))}
 function renderHistory(owner){let a=owner?activeTx().filter(t=>t.owner===owner):activeTx();a=sortNewest(a);const years={};a.forEach(t=>{const y=t.date?t.date.slice(0,4):'—';(years[y]||(years[y]=[])).push(t)});const ys=Object.keys(years).sort().reverse();$('historyTable').innerHTML=ys.length?ys.map((y,i)=>'<details class="year" '+(i===0?'open':'')+'><summary>'+esc(y)+' · '+years[y].length+'</summary>'+tableFor(years[y])+'</details>').join(''):'<div class="empty">'+tr('noCategory')+'</div>'}
-function tableFor(a){return '<table><thead><tr><th>'+tr('date')+'</th><th>'+tr('type')+'</th><th>'+tr('description')+'</th><th>'+esc(activeProgram().unit==='points'?tr('points'):tr('miles'))+'</th><th>'+tr('ownership')+'</th><th></th></tr></thead><tbody>'+a.map(t=>'<tr><td>'+esc(t.date)+'</td><td><span class="pill '+(t.miles<0?'spend':'earn')+'">'+esc(typeLabel(t))+'</span></td><td>'+details(t)+'</td><td class="amount-cell">'+(t.miles>0?'+':'')+fmt(t.miles)+'</td><td>'+esc(ownershipLabel(activeProgram(),t.owner))+'</td><td><div class="history-actions"><button class="small-btn" onclick="editTx(\''+esc(t.id)+'\')" type="button">'+tr('edit')+'</button><button class="small-btn delete-btn" onclick="deleteTx(\''+esc(t.id)+'\')" type="button">'+tr('delete')+'</button></div></td></tr>').join('')+'</tbody></table>'}
+function tableFor(a){return '<table><thead><tr><th>'+tr('date')+'</th><th>'+tr('type')+'</th><th>'+tr('description')+'</th><th>'+esc(activeProgram().unit==='points'?tr('points'):tr('miles'))+'</th><th>'+tr('ownership')+'</th><th></th></tr></thead><tbody>'+a.map(t=>'<tr class="tx-row"><td>'+esc(t.date)+'</td><td><span class="pill '+(t.miles<0?'spend':'earn')+'">'+esc(typeLabel(t))+'</span></td><td>'+details(t)+'</td><td class="amount-cell">'+(t.miles>0?'+':'')+fmt(t.miles)+'</td><td>'+esc(ownershipLabel(activeProgram(),t.owner))+'</td><td class="desktop-action-spacer"></td></tr><tr class="tx-actions-row"><td colspan="6"><div class="history-actions"><button class="small-btn" onclick="editTx(\''+esc(t.id)+'\')" type="button">'+tr('edit')+'</button><button class="small-btn delete-btn" onclick="deleteTx(\''+esc(t.id)+'\')" type="button">'+tr('delete')+'</button></div></td></tr>').join('')+'</tbody></table>'}
 function openHistory(owner){window.__historyOwner=owner||null;const p=activeProgram();$('historyTitle').textContent=owner?ownershipLabel(p,owner)+' · '+p.name:tr('history')+' · '+p.name;$('historyFilter').textContent=owner?ownershipLabel(p,owner):tr('all');$('historyBalance').textContent=fmt(owner?balance(owner):activeTx().reduce((s,t)=>s+Number(t.miles),0));renderHistory(owner);setNav('history')}
 window.editTx=id=>{const t=state.transactions.find(x=>x.id===id);if(!t)return;setForm(t);setNav('add')};
 window.deleteTx=id=>{const t=state.transactions.find(x=>x.id===id);if(!t)return;const ok=confirm(lang==='de'?'Diese Transaktion wirklich löschen?':'Delete this transaction?');if(!ok)return;state.transactions=state.transactions.filter(x=>x.id!==id);save();render();if($('historyView').style.display!=='none')renderHistory(window.__historyOwner);toast(lang==='de'?'Transaktion gelöscht':'Transaction deleted')};function closeModals(){setNav('home')}
